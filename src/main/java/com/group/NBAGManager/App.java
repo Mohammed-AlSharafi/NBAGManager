@@ -71,6 +71,7 @@ public class App {
             }
         });
     }
+
     public void displayForm(){
         JFrame frame = new JFrame("App");
         frame.setContentPane(new App().panelMain);
@@ -78,5 +79,10 @@ public class App {
         frame.setSize(1000, 500);
         frame.setLocationRelativeTo(null);
         frame.setVisible(true);
+    }
+
+    public static void main(String[] args) {
+        App app = new App();
+        app.displayForm();
     }
 }
