@@ -172,6 +172,7 @@ public class LoginMenu extends JFrame {
         char[] passwordChars = passwordField.getPassword();
         String password = new String(passwordChars);
 
+
         // Check for empty fields
         if (username.equals("") || password.equals("")) {
             JOptionPane.showMessageDialog(this, "Please fill in all fields", "Notice", JOptionPane.INFORMATION_MESSAGE);
@@ -180,15 +181,14 @@ public class LoginMenu extends JFrame {
 
         // Retrieve user from repository
         User currentUser =  userRepository.findUserByUsername(username);
-        //String hashedPassword = SecureEncryptor.hashPassword(password,currentUser.getSalt());
+        String hashedPassword = SecureEncryptor.hashPassword(password,currentUser.getSalt());
 
         // Check if the password matches
-        if (currentUser != null && currentUser.getPassword().equals(password)) {
+        if (currentUser != null && currentUser.getPassword().equals(hashedPassword)) {
             // Open the main menu
             CurrentSession.getInstance().setLoggedInUser(currentUser);
 
             //userRepository.setCurrentUser(currentUser);
-            JOptionPane.showMessageDialog(this, "Login successful!");
             App app = new App();
             app.displayForm();
             dispose();
@@ -202,6 +202,11 @@ public class LoginMenu extends JFrame {
         String username = usernameField.getText();
         char[] passwordChars= passwordField.getPassword();
         String password = new String(passwordChars);
+
+        if(password.length()<8){
+            JOptionPane.showMessageDialog(this, "Password is weak. Passsword need to be at least 8 characters");
+            return;
+        }
 
         // Check if the username is already taken
         if (usernameUsed(username)){
@@ -219,7 +224,7 @@ public class LoginMenu extends JFrame {
             String hashedPassword = SecureEncryptor.hashPassword(password,salt);
 
             // Create a new user and add to the repository
-            User newUser = new User(username,hashedPassword,"salt");
+            User newUser = new User(username,hashedPassword,salt);
             userRepository.save(newUser);
             JOptionPane.showMessageDialog(this, "Registration Successful!");
         }

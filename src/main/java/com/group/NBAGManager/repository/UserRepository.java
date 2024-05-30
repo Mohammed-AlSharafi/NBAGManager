@@ -15,7 +15,7 @@ public class UserRepository extends Repository<User> implements UserRepositoryIn
     private void setUserParameters(PreparedStatement pStatement, User obj) throws SQLException {
         pStatement.setString(1, obj.getUsername());
         pStatement.setString(2, obj.getPassword());
-        pStatement.setString(3, obj.getSalt());
+        pStatement.setBytes(3, obj.getSalt());
         pStatement.setBoolean(4, obj.isFirstLogin());
     }
 
@@ -43,7 +43,7 @@ public class UserRepository extends Repository<User> implements UserRepositoryIn
                         rs.getInt("userId"),
                         rs.getString("username"),
                         rs.getString("password"),
-                        rs.getString("salt"),
+                        rs.getBytes("salt"),
                         rs.getBoolean("isFirstLogin"),
                         rs.getString("location")
                 );
@@ -67,7 +67,7 @@ public class UserRepository extends Repository<User> implements UserRepositoryIn
                         rs.getInt("userId"),
                         rs.getString("username"),
                         rs.getString("password"),
-                        rs.getString("salt"),
+                        rs.getBytes("salt"),
                         rs.getBoolean("isFirstLogin"),
                         rs.getString("location")
                 );
@@ -90,7 +90,7 @@ public class UserRepository extends Repository<User> implements UserRepositoryIn
                         rs.getInt("userId"),
                         rs.getString("username"),
                         rs.getString("password"),
-                        rs.getString("salt"),
+                        rs.getBytes("salt"),
                         rs.getBoolean("isFirstLogin"),
                         rs.getString("location")
                 );
