@@ -1,6 +1,5 @@
 package com.group.NBAGManager;
 
-import com.group.NBAGManager.components.RoundedButton;
 import com.group.NBAGManager.model.CurrentSession;
 import com.group.NBAGManager.model.Graph.JourneyGraphHelper;
 import com.group.NBAGManager.model.Graph.WeightedGraph;
@@ -134,16 +133,4 @@ public class Journey {
         nextLocation.revalidate();
         nextLocation.repaint();
     }
-
-    private void createUIComponents() {
-        // Create a new RoundedButton
-        RoundedButton roundedButton = new RoundedButton("Next Location");
-
-        // Set the button's properties
-        roundedButton.setPreferredSize(new Dimension(150, 30));
-
-        // Set the custom button to the getNextLocationBtn field
-        getNextLocationBtn = roundedButton;
-    }
 }
-
