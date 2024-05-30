@@ -45,36 +45,36 @@ public class RemovePlayer {
     }
 
     public void setTable(){
-        UserRepository userRepository=RepositoryHandler.getInstance().getUserRepository();
-        User currentUser = userRepository.findUserByUsername("testUser");
-        CurrentSession.getInstance().setLoggedInUser(currentUser);
-        TeamRepository repo = new TeamRepository();
-        list = repo.findAll();
-        String[] columnNames = {"Name", "Profile", "Average Statistics Per Game"};
-        Object[][] data = new Object[list.size()][3];
-        for (int i = 0; i < list.size(); i++) {
-            Player player = list.get(i);
-            data[i][0] = player; // Store the player object directly
-            data[i][1] = "<html>" + displayProfile(player).replaceAll(", ", "<br>") + "</html>";
-            data[i][2] = "<html>" + displayStats(player).replaceAll(", ", "<br>") + "</html>";
+            list = repo.findAll();
+            String[] columnNames = {"Name", "Profile", "Average Statistics Per Game"};
+            Object[][] data = new Object[list.size()][3];
+            for (int i = 0; i < list.size(); i++) {
+                Player player = list.get(i);
+                data[i][0] = player; // Store the player object directly
+                data[i][1] = formatHtml(displayProfile(player));
+                data[i][2] = formatHtml(displayStats(player));
+            }
+
+            DefaultTableModel model = new DefaultTableModel(data, columnNames) {
+                @Override
+                // Gets column class for each column
+                public Class<?> getColumnClass(int column) {
+                    return column == 0 ? Player.class : String.class;
+                }
+
+                @Override
+                // Cells are not editable
+                public boolean isCellEditable(int row, int column) {
+                    return false;
+                }
+            };
+            table1.setModel(model);
+            table1.setRowHeight(100);
         }
 
-        DefaultTableModel model = new DefaultTableModel(data, columnNames) {
-            @Override
-            //Gets column class for each column
-            public Class<?> getColumnClass(int column) {
-                return column == 0 ? Player.class : String.class;
-            }
-
-            @Override
-            //cell is not editable
-            public boolean isCellEditable(int row, int column) {
-                return false;
-            }
-        };
-        table1.setModel(model);
-        table1.setRowHeight(100);
-    }
+        private String formatHtml(String content) {
+            return "<html>" + content.replaceAll(", ", "<br>") + "</html>";
+        }
 
     public void displayForm(){
         JFrame frame = new JFrame("RemovePlayer");
@@ -112,7 +112,7 @@ public class RemovePlayer {
             @Override
             public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
                 if (value instanceof String) {
-                    return super.getTableCellRendererComponent(table, "<html>" + value.toString(), isSelected, hasFocus, row, column);
+                    return super.getTableCellRendererComponent(table, "<html>" + value, isSelected, hasFocus, row, column);
                 }
                 return super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
             }
@@ -120,8 +120,8 @@ public class RemovePlayer {
         table1.getColumnModel().getColumn(1).setCellRenderer(textRenderer);
         table1.getColumnModel().getColumn(2).setCellRenderer(textRenderer);
         table1.getColumnModel().getColumn(0).setPreferredWidth(100);
-        table1.getColumnModel().getColumn(1).setPreferredWidth(100);
-        table1.getColumnModel().getColumn(2).setPreferredWidth(100);
+        table1.getColumnModel().getColumn(1).setPreferredWidth(150);
+        table1.getColumnModel().getColumn(2).setPreferredWidth(200);
         scrollPane.setViewportView(table1);
     }
 
@@ -133,13 +133,13 @@ public class RemovePlayer {
                 int column = table1.columnAtPoint(e.getPoint());
                 if(column==0&&!(row<0)){
                     Player player = (Player) table1.getValueAt(row,column);
-                    handleRowClick(player);
+                    handleRowClick(row, player);
                 }
             }
         });
     }
 
-    private void handleRowClick(Player player){
+    private void handleRowClick(int row, Player player){
         String message = "Remove Player?";
         String[] options = {"Yes","No"};
         int response = JOptionPane.showOptionDialog(null,message,"Player Removal",JOptionPane.DEFAULT_OPTION,JOptionPane.QUESTION_MESSAGE, null, options, null);
@@ -152,31 +152,36 @@ public class RemovePlayer {
                 else if(counter==1)JOptionPane.showMessageDialog(null,"The number of Guards in your team is less than the minimum(2).");
                 else JOptionPane.showMessageDialog(null,"The number of Forwards in your team is less than the minimum(2).");
             }
+            else{
+                JOptionPane.showConfirmDialog(null, player.getFirstName()+" "+player.getLastName()+" has been removed.");
+                DefaultTableModel model = (DefaultTableModel) table1.getModel();
+                model.removeRow(row);
+            }
         }
     }
 
-    private String displayProfile(Player player){
-        String [] profiles = {"Age","Height","Weight","Position","Salary"};
-        String [] data = {""+player.getAge(),""+player.getHeight(),""+player.getWeight(),player.getPosition(),""+player.getSalary()};
-        String profile = "";
-        for (int i = 0;i<profiles.length;i++) {
-            profile += profiles[i]+": "+data[i];
-            if(i!=profiles.length-1) profile+=", ";
+    private String displayProfile(Player player) {
+        String[] profiles = {"Age", "Height", "Weight", "Position", "Salary"};
+        String[] data = {"" + player.getAge(), "" + player.getHeight(), "" + player.getWeight(), player.getPosition(), "" + player.getSalary()};
+        StringBuilder profile = new StringBuilder();
+        for (int i = 0; i < profiles.length; i++) {
+            profile.append(profiles[i]).append(": ").append(data[i]);
+            if (i != profiles.length - 1) profile.append(", ");
         }
-        return profile;
+        return profile.toString();
     }
 
-    private String displayStats(Player player){
-        //noinspection DuplicatedCode
-        String [] stats = {"Points","Rebounds","Assists","Steals","Blocks"};
-        String [] data = {""+player.getPoints(),""+player.getRebounds(),""+player.getAssists(),""+player.getSteals(),""+player.getBlocks()};
-        String stat = "";
-        for (int i = 0;i<stats.length;i++) {
-            stat += stats[i]+": "+data[i];
-            if(i!=stats.length-1) stat+=", ";
+    private String displayStats(Player player) {
+        String[] stats = {"Points", "Rebounds", "Assists", "Steals", "Blocks"};
+        String[] data = {"" + player.getPoints(), "" + player.getRebounds(), "" + player.getAssists(), "" + player.getSteals(), "" + player.getBlocks()};
+        StringBuilder stat = new StringBuilder();
+        for (int i = 0; i < stats.length; i++) {
+            stat.append(stats[i]).append(": ").append(data[i]);
+            if (i != stats.length - 1) stat.append(", ");
         }
-        return stat;
+        return stat.toString();
     }
+
 
     private boolean checkTeamSize(){
         return list.size()>=10;
