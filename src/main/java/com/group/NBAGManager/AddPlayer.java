@@ -90,4 +90,9 @@ public class AddPlayer {
         }
         return stat;
     }
+
+    public static void main(String[] args) {
+        AddPlayer addPlayer = new AddPlayer();
+        addPlayer.displayForm();
+    }
 }
