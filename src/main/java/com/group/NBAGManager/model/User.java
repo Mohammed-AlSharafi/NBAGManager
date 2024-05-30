@@ -17,14 +17,12 @@ public class User {
             this.isFirstLogin = isFirsLogin;
             this.location = location;
         }
-
-        //used for creating and adding user to db.users
-        public User(String username, String password, byte[] salt) {
+        // constructor to save new registered users
+        public User(String username, String password, byte[] salt, boolean isFirsLogin) {
             this.username = username;
             this.password = password;
             this.salt = salt;
-            this.isFirstLogin = true;
-            this.location = null;
+            this.isFirstLogin = isFirsLogin;
         }
 
         public int getUserId() {
