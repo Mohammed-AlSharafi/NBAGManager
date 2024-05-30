@@ -224,7 +224,7 @@ public class LoginMenu extends JFrame {
             String hashedPassword = SecureEncryptor.hashPassword(password,salt);
 
             // Create a new user and add to the repository
-            User newUser = new User(username,hashedPassword,salt);
+            User newUser = new User(username,hashedPassword,salt,true);
             userRepository.save(newUser);
             JOptionPane.showMessageDialog(this, "Registration Successful!");
         }

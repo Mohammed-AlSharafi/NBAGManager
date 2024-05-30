@@ -12,8 +12,6 @@ import java.util.List;
 
 public class TeamRepository extends Repository<Player> implements TeamRepositoryInterface {
 
-    User currentUser = CurrentSession.getInstance().getLoggedInUser();
-
     //helper method to set the PreparedStatement parameters
     private void setTeamParameters(PreparedStatement pStatement, Player obj, User currentUser) throws SQLException {
         pStatement.setInt(1, currentUser.getUserId());
@@ -34,6 +32,7 @@ public class TeamRepository extends Repository<Player> implements TeamRepository
     }
 
     public Player findById(int id) {
+        User currentUser = CurrentSession.getInstance().getLoggedInUser();
         Player player = null;
         try{
             String query = "SELECT players.*, teams.salary FROM players INNER JOIN teams ON players.playerId = teams.playerId INNER JOIN users ON teams.userId = users.userId WHERE players.playerId = ? AND users.userId = ?";
@@ -66,6 +65,7 @@ public class TeamRepository extends Repository<Player> implements TeamRepository
     }
 
     public List<Player> findAll() {
+        User currentUser = CurrentSession.getInstance().getLoggedInUser();
         List<Player> players = new ArrayList<>();
         try{
             String query = "SELECT players.*, teams.salary FROM players INNER JOIN teams ON players.playerId = teams.playerId INNER JOIN users ON teams.userId = users.userId WHERE users.userId = ?";
@@ -98,6 +98,7 @@ public class TeamRepository extends Repository<Player> implements TeamRepository
     }
 
     public void update(Player obj) {
+        User currentUser = CurrentSession.getInstance().getLoggedInUser();
         try{
             String query = "UPDATE teams SET salary = ? WHERE playerId = ? AND userId = ?";
             PreparedStatement pStatement = con.prepareStatement(query);
@@ -112,6 +113,7 @@ public class TeamRepository extends Repository<Player> implements TeamRepository
     }
 
     public void deleteById(int id) {
+        User currentUser = CurrentSession.getInstance().getLoggedInUser();
         try{
             String query = "DELETE FROM teams WHERE playerId = ? AND userId = ?";
             PreparedStatement pStatement = con.prepareStatement(query);
