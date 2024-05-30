@@ -4,12 +4,12 @@ public class User {
         private int userId;
         private String username;
         private String password;
-        private String salt;
+        private byte[] salt;
         private boolean isFirstLogin;
         private String location;
 
         //used as an enclosure for user(s) coming from db.users (NOT FOR USER CREATION USE)
-        public User(int userId, String username, String password, String salt, boolean isFirsLogin, String location) {
+        public User(int userId, String username, String password, byte[] salt, boolean isFirsLogin, String location) {
             this.userId = userId;
             this.username = username;
             this.password = password;
@@ -19,7 +19,7 @@ public class User {
         }
 
         //used for creating and adding user to db.users
-        public User(String username, String password, String salt) {
+        public User(String username, String password, byte[] salt) {
             this.username = username;
             this.password = password;
             this.salt = salt;
@@ -47,11 +47,11 @@ public class User {
             this.password = password;
         }
 
-        public String getSalt() {
+        public byte[] getSalt() {
             return salt;
         }
 
-        public void setSalt(String salt) {
+        public void setSalt(byte[] salt) {
             this.salt = salt;
         }
 
