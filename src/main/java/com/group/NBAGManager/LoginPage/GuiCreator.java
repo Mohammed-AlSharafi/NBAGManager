@@ -2,14 +2,16 @@ package com.group.NBAGManager.LoginPage;
 import javax.swing.*;
 import java.awt.*;
 
+//class to help create java swing elements such as buttons,labels and text fields
 public class GuiCreator {
+
+    //create button with specified text,font,foreground color and background colour
     public static JButton createButton(String text, Font font, Color foreground, Color background, boolean borderPainted, int x, int y) {
         JButton button = new JButton(text);
         button.setFont(font);
         button.setForeground(foreground);
         button.setBackground(background);
         button.setBorderPainted(borderPainted);
-        //button.setBounds(x, y, button.getPreferredSize().width, button.getPreferredSize().height);
         return button;
     }
 
@@ -28,6 +30,7 @@ public class GuiCreator {
         textField.setFont(font);
         textField.setForeground(foreground);
         textField.setBackground(background);
+        //if boolean border is false, there will be no border
         if (!border) {
             textField.setBorder(null);
         }
@@ -41,6 +44,7 @@ public class GuiCreator {
         passwordField.setFont(font);
         passwordField.setForeground(foreground);
         passwordField.setBackground(background);
+        //if boolean border is false, there will be no border
         if (!border) {
             passwordField.setBorder(null);
         }

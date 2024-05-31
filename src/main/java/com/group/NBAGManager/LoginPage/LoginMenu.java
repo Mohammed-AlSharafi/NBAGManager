@@ -23,22 +23,14 @@ public class LoginMenu extends JFrame {
 
     // Constructor for the LoginMenu class
     public LoginMenu() throws IOException {
-        // Initialize the user repository
-
-
-        // Set JFrame properties
+        //set JFrame properties
         setTitle("NBA G-Manager");
         setSize(600, 400);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLayout(new GridBagLayout());
         setLocationRelativeTo(null);
 
-
-        // Set background
-        //JLabel backgroundLabel = new JLabel(new ImageIcon("C:\\SEM 2\\DS2024\\DSASSIGNMENT\\loginMenuBackground.jpeg"));
-        //add(backgroundLabel);
-        //backgroundLabel.setLayout(new GridBagLayout());
-        //setContentPane(backgroundLabel);
+        //set the backgroundImage
         ImageIcon backgroundImage = new ImageIcon("src/main/resources/images/login-background.jpeg");
 
         // Resize the image to fit the window size
@@ -54,53 +46,36 @@ public class LoginMenu extends JFrame {
         GridBagConstraints gridbag = new GridBagConstraints();
         gridbag.insets = new Insets(15, 15, 15, 15);
 
-        setResizable(true);
-        //JLabel backgroundLabel = new JLabel(new ImageIcon("C:\\SEM 2\\DS2024\\DSASSIGNMENT\\loginMenuBackground.jpeg"));
-        //add(backgroundLabel);
-        //backgroundLabel.setLayout(new GridBagLayout());
-        //setContentPane(backgroundLabel);
-
-        ImageIcon finalBackgroundImage = backgroundImage;
-        addComponentListener(new ComponentAdapter() {
-            @Override
-            public void componentResized(ComponentEvent e) {
-                // Resize the image to fit the new window size
-                Image img = finalBackgroundImage.getImage();
-                Image resizedImg = img.getScaledInstance(getWidth(), getHeight(), Image.SCALE_SMOOTH);
-                finalBackgroundImage.setImage(resizedImg);
-                backgroundLabel.setIcon(finalBackgroundImage);
-            }
-        });
+        //set the window size to be constant
+        setResizable(false);
 
 
-
-        // Create a panel to hold the components
-        //JPanel panel = new JPanel(new GridBagLayout());
-        //panel.setOpaque(false); // Make the panel transparent
-        //getContentPane().add(panel);
-
-        // Create and add title label
+        //create and add title label
+        //create titleLabel using GuiCreator class
         JLabel titleLabel = GuiCreator.createLabel("Welcome to NBA G-Manager!", new Font("Roboto", Font.BOLD, 20), Color.decode("#E2B714"), 0, 0);
         gridbag.gridx = 0;
         gridbag.gridy = 0;
         gridbag.gridwidth = 2;
         backgroundLabel.add(titleLabel,gridbag);
 
-        // Create and add subtitle label
+        //create and add subtitle label
+        //create subTitleLabel using GuiCreator class
         JLabel subTitleLabel = GuiCreator.createLabel("by Group...", new Font("Roboto Mono", Font.PLAIN, 14), Color.decode("#E2B714"), 0, 1);
         gridbag.gridx = 0;
         gridbag.gridy = 1;
         gridbag.gridwidth = 2;
         backgroundLabel.add(subTitleLabel,gridbag);
 
-        // Create and add username label
+        //create and add username label
+        //create usernameLabel using GuiCreator class
         JLabel usernameLabel = GuiCreator.createLabel("Username", new Font("Roboto Mono", Font.PLAIN, 13), Color.decode("#E2B714"), 0, 2);
         gridbag.gridx = 0;
         gridbag.gridy = 2;
         gridbag.gridwidth = 1;
         backgroundLabel.add(usernameLabel,gridbag);
 
-        // Create and add password label
+        //create and add password label
+        //create passwordLabel using GuiCreator class
         JLabel passwordLabel = GuiCreator.createLabel("Password", new Font("Roboto Mono", Font.PLAIN, 13), Color.decode("#E2B714"), 0, 3);
         gridbag.gridx = 0;
         gridbag.gridy = 3;
@@ -108,6 +83,7 @@ public class LoginMenu extends JFrame {
         backgroundLabel.add(passwordLabel,gridbag);
 
         // Create and add username text field
+        // create usernameField using GuiCreator class
         usernameField = GuiCreator.createTextField(8, new Font("Roboto Mono", Font.PLAIN, 13), Color.white, Color.decode("#2C2E31"), true, 1, 2);
         gridbag.gridx = 1;
         gridbag.gridy = 2;
@@ -115,7 +91,8 @@ public class LoginMenu extends JFrame {
         gridbag.fill = GridBagConstraints.HORIZONTAL;
         backgroundLabel.add(usernameField,gridbag);
 
-        // Create and add password text field
+        //create and add password text field
+        //create passwordField using GuiCreator class
         passwordField = GuiCreator.createPasswordField(8, new Font("Roboto Mono", Font.PLAIN, 13), Color.white, Color.decode("#2C2E31"), true, 1, 3);
         gridbag.gridx = 1;
         gridbag.gridy = 3;
@@ -123,7 +100,8 @@ public class LoginMenu extends JFrame {
         gridbag.fill = GridBagConstraints.HORIZONTAL;
         backgroundLabel.add(passwordField,gridbag);
 
-        // Create and add login button
+        //create and add login button
+        //create button using GuiCreator class
         JButton loginButton = GuiCreator.createButton("Login", new Font("Roboto Mono", Font.BOLD, 15), Color.decode("#646669"), Color.decode("#323437"), false, 1, 4);
         gridbag.gridx = 1;
         gridbag.gridy = 4;
@@ -167,70 +145,73 @@ public class LoginMenu extends JFrame {
 
 
     }
+
+    //method to handle login logic
     private void login() {
+        //get the username and password that the user entered in the textField
         String username = usernameField.getText();
         char[] passwordChars = passwordField.getPassword();
         String password = new String(passwordChars);
 
 
-        // Check for empty fields
+        //check for empty fields
         if (username.equals("") || password.equals("")) {
             JOptionPane.showMessageDialog(this, "Please fill in all fields", "Notice", JOptionPane.INFORMATION_MESSAGE);
             return;
         }
 
-        // Retrieve user from repository
+        //retrieve user from repository
         User currentUser =  userRepository.findUserByUsername(username);
         String hashedPassword = SecureEncryptor.hashPassword(password,currentUser.getSalt());
 
-        // Check if the password matches
+        //check if the password matches
         if (currentUser != null && currentUser.getPassword().equals(hashedPassword)) {
-            // Open the main menu
+            //sets the loggedInUser as the currentUser
             CurrentSession.getInstance().setLoggedInUser(currentUser);
-
-            //userRepository.setCurrentUser(currentUser);
+            //open the main menu
             App app = new App();
             app.displayForm();
             dispose();
         } else {
+            //prompt message if password or username is incorrect
             JOptionPane.showMessageDialog(this, "Invalid username or password", "Error", JOptionPane.ERROR_MESSAGE);
         }
     }
 
     // Method to handle registration logic
     private void register(){
+        //get the username and password that the user entered in the textField
         String username = usernameField.getText();
         char[] passwordChars= passwordField.getPassword();
         String password = new String(passwordChars);
 
-        if(password.length()<8){
-            JOptionPane.showMessageDialog(this, "Password is weak. Passsword need to be at least 8 characters");
-            return;
-        }
-
-        // Check if the username is already taken
+        //check if the username is already taken
         if (usernameUsed(username)){
             JOptionPane.showMessageDialog(this, "Username has already been taken");
             return;
         }
 
-        // Validate username and password
+        //validate username and password
         if (username.equals("")) {
             JOptionPane.showMessageDialog(this, "Username can't be empty", "Error", JOptionPane.ERROR_MESSAGE);
         } else if(password.equals("")) {
             JOptionPane.showMessageDialog(this, "Please enter your password", "Error", JOptionPane.ERROR_MESSAGE);
+        } else if (password.length()<8) {
+            //extra condition to make sure user enters a password that has a length of atleast 8 characters
+            JOptionPane.showMessageDialog(this, "Password is weak. Passsword need to be at least 8 characters");
         } else {
+            //hash the password using SecureEncryptor class for security when storing into database
             byte[] salt = SecureEncryptor.generateSalt();
             String hashedPassword = SecureEncryptor.hashPassword(password,salt);
 
-            // Create a new user and add to the repository
+            //create a new user object and add to the repository
             User newUser = new User(username,hashedPassword,salt,true);
             userRepository.save(newUser);
             JOptionPane.showMessageDialog(this, "Registration Successful!");
         }
     }
 
-    // Method to check if the username is already in use
+    //method to check if the username is already in use
     private boolean usernameUsed(String username){
         User user = userRepository.findUserByUsername(username);
         return user != null;
