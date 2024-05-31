@@ -27,9 +27,6 @@ public class AddPlayer {
 
 
     public AddPlayer() {
-        UserRepository userRepository=RepositoryHandler.getInstance().getUserRepository();
-        User currentUser = userRepository.findUserByUsername("testUser");
-        CurrentSession.getInstance().setLoggedInUser(currentUser);
         repo = new TeamRepository();
         team = repo.findAll();
         playersTable.addComponentListener(new ComponentAdapter() {
@@ -179,7 +176,7 @@ public class AddPlayer {
             salary += player.getSalary();
         }
         salary+=Salary;
-        return salary <= 20000;
+        return salary <= 20000.0;
     }
 
     private boolean checkPlayerSalary(Player player, double Salary){
@@ -235,12 +232,5 @@ public class AddPlayer {
         return stat;
     }
 
-    public static void main(String[] args) {
-        AddPlayer addPlayer = new AddPlayer();
-        List<Player> list = addPlayer.repo.findAll();
-        for(Player player: list){
-            System.out.println(player);
-        }
-    }
 }
 

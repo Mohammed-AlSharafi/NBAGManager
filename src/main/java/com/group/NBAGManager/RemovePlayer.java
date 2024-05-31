@@ -27,9 +27,6 @@ public class RemovePlayer {
     private List<Player> list;
     public RemovePlayer(){
         panelMain.setLayout(new BorderLayout());
-        UserRepository userRepository=RepositoryHandler.getInstance().getUserRepository();
-        User currentUser = userRepository.findUserByUsername("testUser");
-        CurrentSession.getInstance().setLoggedInUser(currentUser);
         repo = new TeamRepository();
         //returns the value of component being resized
         table1.addComponentListener(new ComponentAdapter() {
@@ -54,7 +51,6 @@ public class RemovePlayer {
                 data[i][0] = player; // Store the player object directly
                 data[i][1] = formatHtml(displayProfile(player));
                 data[i][2] = formatHtml(displayStats(player));
-                System.out.println(data[i][0]);
             }
 
             DefaultTableModel model = new DefaultTableModel(data, columnNames) {
@@ -86,16 +82,6 @@ public class RemovePlayer {
         frame.setLocationRelativeTo(null);
         frame.setResizable(false);
         frame.setVisible(true);
-    }
-
-    public void reloadTableData() {
-        list = repo.findAll(); // Reload the list from the repository
-        DefaultTableModel model = (DefaultTableModel) table1.getModel();
-        model.setRowCount(0); // Clear existing data
-
-        for (Player player : list) {
-            model.addRow(new Object[]{player, formatHtml(displayProfile(player)), formatHtml(displayStats(player))});
-        }
     }
 
     public void tableFormatting(){
@@ -157,7 +143,13 @@ public class RemovePlayer {
         String[] options = {"Yes","No"};
         int response = JOptionPane.showOptionDialog(null,message,"Player Removal",JOptionPane.DEFAULT_OPTION,JOptionPane.QUESTION_MESSAGE, null, options, null);
         if(response == 0){
-            if(!checkTeamSize())JOptionPane.showMessageDialog(null,"Team size is less than minimum.");
+            if(list.size()<10){
+                repo.deleteById(player.getPlayerId());
+                JOptionPane.showConfirmDialog(null, player.getFirstName()+" "+player.getLastName()+" has been removed.");
+                DefaultTableModel model = (DefaultTableModel) table1.getModel();
+                model.removeRow(row);
+            }
+            if(list.size()==10)JOptionPane.showMessageDialog(null,"Team size is less than minimum.");
             else if(checkTeamPositions()>=0){
                 int counter = checkTeamPositions();
                 if(counter==0)JOptionPane.showMessageDialog(null,"The number of Centers in your team is less than the minimum(2).");
@@ -217,11 +209,5 @@ public class RemovePlayer {
     public void displayFull(){
         displayForm();
     }
-
-    public static void main(String[] args) {
-        RemovePlayer removePlayer = new RemovePlayer();
-        removePlayer.displayFull();
-    }
-
 
 }
