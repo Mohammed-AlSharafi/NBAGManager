@@ -36,7 +36,6 @@ public class App {
 
         removeButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-
             }
         });
         injuriesButton.addActionListener(new ActionListener() {
