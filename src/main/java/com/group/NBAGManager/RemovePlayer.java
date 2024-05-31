@@ -26,6 +26,7 @@ public class RemovePlayer {
     TeamRepository repo;
     private List<Player> list;
     public RemovePlayer(){
+        panelMain.setLayout(new BorderLayout());
         UserRepository userRepository=RepositoryHandler.getInstance().getUserRepository();
         User currentUser = userRepository.findUserByUsername("testUser");
         CurrentSession.getInstance().setLoggedInUser(currentUser);
@@ -111,10 +112,11 @@ public class RemovePlayer {
         DefaultTableCellRenderer textRenderer = new DefaultTableCellRenderer() {
             @Override
             public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
-                if (value instanceof String) {
-                    return super.getTableCellRendererComponent(table, "<html>" + value, isSelected, hasFocus, row, column);
+                JLabel label = (JLabel) super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
+                if (value != null) {
+                    label.setText((String) value);
                 }
-                return super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
+                return label;
             }
         };
         table1.getColumnModel().getColumn(1).setCellRenderer(textRenderer);
@@ -144,7 +146,6 @@ public class RemovePlayer {
         String[] options = {"Yes","No"};
         int response = JOptionPane.showOptionDialog(null,message,"Player Removal",JOptionPane.DEFAULT_OPTION,JOptionPane.QUESTION_MESSAGE, null, options, null);
         if(response == 0){
-            list.remove(player);
             if(!checkTeamSize())JOptionPane.showMessageDialog(null,"Team size is less than minimum.");
             else if(checkTeamPositions()>=0){
                 int counter = checkTeamPositions();
@@ -153,6 +154,7 @@ public class RemovePlayer {
                 else JOptionPane.showMessageDialog(null,"The number of Forwards in your team is less than the minimum(2).");
             }
             else{
+                repo.deleteById(player.getPlayerId());
                 JOptionPane.showConfirmDialog(null, player.getFirstName()+" "+player.getLastName()+" has been removed.");
                 DefaultTableModel model = (DefaultTableModel) table1.getModel();
                 model.removeRow(row);
