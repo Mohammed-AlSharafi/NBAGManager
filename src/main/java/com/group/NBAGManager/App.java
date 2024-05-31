@@ -36,6 +36,8 @@ public class App {
 
         removeButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
+                RemovePlayer removePlayer = new RemovePlayer();
+                removePlayer.displayForm();
             }
         });
         injuriesButton.addActionListener(new ActionListener() {
