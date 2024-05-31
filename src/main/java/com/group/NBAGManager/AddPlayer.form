@@ -17,7 +17,10 @@
         <children>
           <component id="eb623" class="javax.swing.JTable" binding="playersTable">
             <constraints/>
-            <properties/>
+            <properties>
+              <preferredScrollableViewportSize width="450" height="3000"/>
+              <preferredSize width="600" height="3000"/>
+            </properties>
           </component>
         </children>
       </scrollpane>

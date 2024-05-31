@@ -22,11 +22,11 @@
             <properties>
               <autoCreateColumnsFromModel value="true"/>
               <autoCreateRowSorter value="true"/>
-              <autoResizeMode value="1"/>
+              <autoResizeMode value="2"/>
               <enabled value="true"/>
               <fillsViewportHeight value="false"/>
-              <preferredScrollableViewportSize width="450" height="400"/>
-              <preferredSize width="600" height="600"/>
+              <preferredScrollableViewportSize width="450" height="2000"/>
+              <preferredSize width="600" height="2000"/>
               <requestFocusEnabled value="true"/>
             </properties>
           </component>
