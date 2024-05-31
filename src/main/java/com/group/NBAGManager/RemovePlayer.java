@@ -54,6 +54,7 @@ public class RemovePlayer {
                 data[i][0] = player; // Store the player object directly
                 data[i][1] = formatHtml(displayProfile(player));
                 data[i][2] = formatHtml(displayStats(player));
+                System.out.println(data[i][0]);
             }
 
             DefaultTableModel model = new DefaultTableModel(data, columnNames) {
@@ -85,6 +86,16 @@ public class RemovePlayer {
         frame.setLocationRelativeTo(null);
         frame.setResizable(false);
         frame.setVisible(true);
+    }
+
+    public void reloadTableData() {
+        list = repo.findAll(); // Reload the list from the repository
+        DefaultTableModel model = (DefaultTableModel) table1.getModel();
+        model.setRowCount(0); // Clear existing data
+
+        for (Player player : list) {
+            model.addRow(new Object[]{player, formatHtml(displayProfile(player)), formatHtml(displayStats(player))});
+        }
     }
 
     public void tableFormatting(){
