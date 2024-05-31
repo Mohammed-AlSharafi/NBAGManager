@@ -61,7 +61,7 @@ public class Journey {
         bestRoute.setText(shortestPathSB.toString());
 
         //setting the total distance
-        totalDistanceLbl.setText("Total Distance: " + journeyGraph.getTotalDistance(shortestPath) + " miles");
+        totalDistanceLbl.setText("Total Distance: " + journeyGraph.getTotalDistance(shortestPath) + " KMs");
 
         //getRouteBtn action listener
         getNextLocationBtn.addActionListener(new ActionListener() {
