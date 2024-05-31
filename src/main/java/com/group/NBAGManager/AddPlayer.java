@@ -31,6 +31,7 @@ public class AddPlayer {
         User currentUser = userRepository.findUserByUsername("testUser");
         CurrentSession.getInstance().setLoggedInUser(currentUser);
         repo = new TeamRepository();
+        team = repo.findAll();
         playersTable.addComponentListener(new ComponentAdapter() {
             @Override
             public void componentResized(ComponentEvent e) {
@@ -95,10 +96,11 @@ public class AddPlayer {
         DefaultTableCellRenderer textRenderer = new DefaultTableCellRenderer() {
             @Override
             public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
-                if (value instanceof String) {
-                    return super.getTableCellRendererComponent(table, "<html>" + value.toString(), isSelected, hasFocus, row, column);
+                JLabel label = (JLabel) super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
+                if (value != null) {
+                    label.setText((String) value);
                 }
-                return super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
+                return label;
             }
         };
         playersTable.getColumnModel().getColumn(1).setCellRenderer(textRenderer);
@@ -124,7 +126,10 @@ public class AddPlayer {
     }
 
     private void handleRowClick(Player player){
-        if(checkPlayer(player))JOptionPane.showMessageDialog(null, "Player already in team.");
+        if(checkPlayer(player)){
+            JOptionPane.showMessageDialog(null, "Player already in team.");
+            return;
+        }
         String message = "Add Player?";
         String[] options = {"Yes","No"};
         int response = JOptionPane.showOptionDialog(null, message, "Player addition", JOptionPane.DEFAULT_OPTION, JOptionPane.QUESTION_MESSAGE,null,options,null);
@@ -139,7 +144,7 @@ public class AddPlayer {
                     salary_check+="Players with less points have minimum salary of 1000.";
                     salary_check+="Your current player has "+player.getPoints()+" points.";
                     if(checkPlayerSalary(player,salary))JOptionPane.showMessageDialog(null,salary_check);
-                    else if(checkTeamSalary(salary)) JOptionPane.showMessageDialog(null,"This player's salary will exceed the team salary cap.");
+                    else if(!checkTeamSalary(salary)) JOptionPane.showMessageDialog(null,"This player's salary will exceed the team salary cap.");
                     else{
                         player.setSalary(salary);
                         repo.save(player);
@@ -164,8 +169,8 @@ public class AddPlayer {
     }
 
     private boolean checkPlayer(Player player){
-        team = repo.findAll();
-        return team.contains(player);
+        Player check = repo.findById(player.getPlayerId());
+        return check!=null;
     }
 
     private boolean checkTeamSalary(double Salary){
@@ -232,7 +237,7 @@ public class AddPlayer {
 
     public static void main(String[] args) {
         AddPlayer addPlayer = new AddPlayer();
-        addPlayer.displayForm();
+       addPlayer.displayForm();
     }
 }
 
