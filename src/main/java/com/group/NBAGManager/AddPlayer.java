@@ -23,7 +23,7 @@ public class AddPlayer {
     private JTable playersTable;
     private JScrollPane scroll;
     List<Player> team;
-    TeamRepository repo;
+    public TeamRepository repo;
 
 
     public AddPlayer() {
@@ -237,7 +237,10 @@ public class AddPlayer {
 
     public static void main(String[] args) {
         AddPlayer addPlayer = new AddPlayer();
-       addPlayer.displayForm();
+        List<Player> list = addPlayer.repo.findAll();
+        for(Player player: list){
+            System.out.println(player);
+        }
     }
 }
 
