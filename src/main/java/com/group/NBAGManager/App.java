@@ -49,13 +49,14 @@ public class App {
         });
         injuriesButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                new InjuryReserveManagement();
+                //new InjuryReserveManagement();
             }
         });
         contractButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                new ContractExtensionQueue();
+                ContractExtensionQueue contract = new ContractExtensionQueue();
+                contract.displayForm();
             }
         });
         rankingButton.addActionListener(new ActionListener() {
