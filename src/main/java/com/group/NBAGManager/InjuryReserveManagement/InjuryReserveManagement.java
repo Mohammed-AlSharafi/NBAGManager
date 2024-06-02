@@ -1,4 +1,4 @@
-package com.group.NBAGManager;
+package com.group.NBAGManager.InjuryReserveManagement;
 
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -8,75 +8,65 @@ import java.awt.event.MouseEvent;
 import java.io.*;
 import java.util.ArrayList;
 import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.Queue;
+import java.util.List;
+import java.util.Stack;
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import com.group.NBAGManager.model.Player;
 import com.group.NBAGManager.repository.TeamRepository;
 
-public class ContractExtensionQueue {
+public class InjuryReserveManagement {
 
     private JPanel panelMain;
-    private JLabel contractLabel;
-    private JTable contractTable;
+    private JLabel label1;
+    private JTable injuryTable;
     private JButton removeButton;
     private JButton backButton;
     private JButton addButton;
 
-    private Queue<String> contractQueue;
+    private Stack<String> injuryStack;
 
-    public ContractExtensionQueue() {
-        //queue for contract
-        contractQueue = new LinkedList<>();
+    //similar to contract, just change queue to stack
+    public InjuryReserveManagement() {
+        injuryStack = new Stack<>();
 
-        //initialise GUI
         panelMain = new JPanel();
         panelMain.setLayout(new BoxLayout(panelMain, BoxLayout.Y_AXIS));
 
-        contractLabel = new JLabel("Contract");
-        contractLabel.setFont(new Font("MV Boli", Font.PLAIN, 20));
-        contractLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
-        panelMain.add(contractLabel);
+        label1 = new JLabel("Injury Reserve");
+        label1.setFont(new Font("MV Boli", Font.PLAIN, 20));
+        label1.setAlignmentX(Component.CENTER_ALIGNMENT);
+        panelMain.add(label1);
 
-        // this one to add spacing between text and table
         panelMain.add(Box.createVerticalStrut(20));
 
-        // contractTable for players in contract queue
         String[] columnNames = {"Player", "Status"};
         DefaultTableModel tableModel = new DefaultTableModel(columnNames, 0);
-        contractTable = new JTable(tableModel);
+        injuryTable = new JTable(tableModel);
 
-        // load existing queue
-        loadQueueState();
+        loadStackState();
 
-
-        JScrollPane tableScrollPane = new JScrollPane(contractTable);
+        JScrollPane tableScrollPane = new JScrollPane(injuryTable);
         tableScrollPane.setAlignmentX(Component.CENTER_ALIGNMENT);
         panelMain.add(tableScrollPane);
 
         panelMain.add(Box.createVerticalStrut(20));
 
-        //buttons
         addButton = new JButton("Add Player");
         removeButton = new JButton("Remove Player");
         backButton = new JButton("Back");
 
-        //panel for buttons
         JPanel buttonPanel = new JPanel();
         buttonPanel.setLayout(new BoxLayout(buttonPanel, BoxLayout.X_AXIS));
         buttonPanel.setAlignmentX(Component.CENTER_ALIGNMENT);
 
-        // Add buttons to buttonPanel
         buttonPanel.add(addButton);
-        buttonPanel.add(Box.createHorizontalStrut(10)); //spacing
+        buttonPanel.add(Box.createHorizontalStrut(10)); // Add space between buttons
         buttonPanel.add(removeButton);
-        buttonPanel.add(Box.createHorizontalStrut(10));
+        buttonPanel.add(Box.createHorizontalStrut(10)); // Add space between buttons
         buttonPanel.add(backButton);
 
-        // Add buttonPanel to panelMain
         panelMain.add(buttonPanel);
-
 
         addButton.addActionListener(new ActionListener() {
             @Override
@@ -88,14 +78,13 @@ public class ContractExtensionQueue {
         backButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                saveQueueState(); //queue is saved when back is clicked
+                saveStackState();
             }
         });
     }
 
-
-    public void displayForm() { //to display form file for GUI
-        JFrame frame = new JFrame("Contract");
+    public void displayForm() {
+        JFrame frame = new JFrame("Injury Reserve");
         frame.setContentPane(panelMain);
         frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         frame.setSize(1250, 700);
@@ -103,49 +92,44 @@ public class ContractExtensionQueue {
         frame.setResizable(false);
         frame.setVisible(true);
 
-        //action listener
         backButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                saveQueueState(); //save when click back
-                frame.dispose(); //close
+                saveStackState();
+                frame.dispose();
             }
         });
 
         removeButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                removePlayerFromQueue();
+                removePlayerFromStack();
             }
         });
 
         frame.addWindowListener(new java.awt.event.WindowAdapter() {
             @Override
             public void windowClosing(java.awt.event.WindowEvent e) {
-                saveQueueState();
+                saveStackState();
                 super.windowClosing(e);
             }
         });
     }
 
-
-    private void addPlayerFromRepository() { //window popup containing players in current team
+    private void addPlayerFromRepository() {
         JFrame playerListFrame = new JFrame("Select Player");
         playerListFrame.setSize(500, 400);
         playerListFrame.setLocationRelativeTo(null);
 
-        // Retrieve players from TeamRepository
         TeamRepository teamRepository = new TeamRepository();
-        java.util.List<Player> availablePlayers = new ArrayList<>(teamRepository.findAll());
+        List<Player> availablePlayers = new ArrayList<>(teamRepository.findAll());
 
-        // Create table data for players
         Object[][] rowData = new Object[availablePlayers.size()][2];
         for (int i = 0; i < availablePlayers.size(); i++) {
             rowData[i][0] = availablePlayers.get(i).getFirstName() + " " + availablePlayers.get(i).getLastName();
             rowData[i][1] = "Active";
         }
 
-        // Create table with player data
         String[] columnNames = {"Player", "Status"};
         DefaultTableModel tableModel = new DefaultTableModel(rowData, columnNames);
         JTable playerTable = new JTable(tableModel);
@@ -153,7 +137,6 @@ public class ContractExtensionQueue {
         JScrollPane scrollPane = new JScrollPane(playerTable);
         playerListFrame.add(scrollPane);
 
-        // Add action listener to handle player selection
         playerTable.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
@@ -161,13 +144,10 @@ public class ContractExtensionQueue {
                 if (selectedRow != -1) {
                     String playerName = (String) playerTable.getValueAt(selectedRow, 0);
 
-                    // Add player to contract table
-                    DefaultTableModel contractTableModel = (DefaultTableModel) contractTable.getModel();
-                    contractTableModel.addRow(new Object[]{playerName, "Pending to renew contract"});
-                    //add to queue
-                    contractQueue.offer(playerName);
+                    DefaultTableModel injuryTableModel = (DefaultTableModel) injuryTable.getModel();
+                    injuryTableModel.addRow(new Object[]{playerName, "Injured"});
+                    injuryStack.push(playerName); //add to stack
 
-                    // Remove player from the list of available players
                     for (Iterator<Player> iterator = availablePlayers.iterator(); iterator.hasNext();) {
                         Player player = iterator.next();
                         if ((player.getFirstName() + " " + player.getLastName()).equals(playerName)) {
@@ -176,7 +156,6 @@ public class ContractExtensionQueue {
                         }
                     }
 
-                    // Update table model with new list of available players
                     Object[][] updatedRowData = new Object[availablePlayers.size()][2];
                     for (int i = 0; i < availablePlayers.size(); i++) {
                         updatedRowData[i][0] = availablePlayers.get(i).getFirstName() + " " + availablePlayers.get(i).getLastName();
@@ -191,30 +170,28 @@ public class ContractExtensionQueue {
         playerListFrame.setVisible(true);
     }
 
-    private void removePlayerFromQueue() {
-        DefaultTableModel contractTableModel = (DefaultTableModel) contractTable.getModel();
-        if (!contractQueue.isEmpty()) {
-            // Remove player from the contractQueue
-            String removedPlayer = contractQueue.poll();
-            // Remove player from the contractTable
-            for (int i = 0; i < contractTableModel.getRowCount(); i++) {
-                String playerName = (String) contractTableModel.getValueAt(i, 0);
+    private void removePlayerFromStack() {
+        DefaultTableModel injuryTableModel = (DefaultTableModel) injuryTable.getModel();
+        if (!injuryStack.isEmpty()) {
+            String removedPlayer = injuryStack.pop(); //remove from stack
+            for (int i = 0; i < injuryTableModel.getRowCount(); i++) {
+                String playerName = (String) injuryTableModel.getValueAt(i, 0);
                 if (playerName.equals(removedPlayer)) {
-                    contractTableModel.removeRow(i);
+                    injuryTableModel.removeRow(i);
                     break;
                 }
             }
         } else {
-            //if queue empty
-            JOptionPane.showMessageDialog(panelMain, "No players in the contract queue.", "Queue Empty", JOptionPane.WARNING_MESSAGE);
+            //empty stack
+            JOptionPane.showMessageDialog(panelMain, "No players in the injury reserve stack.", "Stack Empty", JOptionPane.WARNING_MESSAGE);
         }
     }
 
-    private void saveQueueState() { //save queue
-        try (ObjectOutputStream out = new ObjectOutputStream(new FileOutputStream("contractQueue.ser"))) {
-            out.writeObject(contractQueue);
+    private void saveStackState() {
+        try (ObjectOutputStream out = new ObjectOutputStream(new FileOutputStream("injuryStack.ser"))) {
+            out.writeObject(injuryStack);
 
-            DefaultTableModel model = (DefaultTableModel) contractTable.getModel();
+            DefaultTableModel model = (DefaultTableModel) injuryTable.getModel();
             int rowCount = model.getRowCount();
             ArrayList<String[]> tableData = new ArrayList<>();
             for (int i = 0; i < rowCount; i++) {
@@ -230,11 +207,11 @@ public class ContractExtensionQueue {
     }
 
     @SuppressWarnings("unchecked")
-    private void loadQueueState() {
-        try (ObjectInputStream in = new ObjectInputStream(new FileInputStream("contractQueue.ser"))) {
-            contractQueue = (Queue<String>) in.readObject();
+    private void loadStackState() {
+        try (ObjectInputStream in = new ObjectInputStream(new FileInputStream("injuryStack.ser"))) {
+            injuryStack = (Stack<String>) in.readObject();
 
-            DefaultTableModel model = (DefaultTableModel) contractTable.getModel();
+            DefaultTableModel model = (DefaultTableModel) injuryTable.getModel();
             ArrayList<String[]> tableData = (ArrayList<String[]>) in.readObject();
             for (String[] row : tableData) {
                 model.addRow(row);
