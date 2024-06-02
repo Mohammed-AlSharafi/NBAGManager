@@ -1,5 +1,6 @@
 package com.group.NBAGManager;
 
+import com.group.NBAGManager.InjuryReserveManagement.InjuryReserveManagement;
 import com.group.NBAGManager.LoginPage.LoginMenu;
 import com.group.NBAGManager.model.CurrentSession;
 import com.group.NBAGManager.model.User;
@@ -42,7 +43,8 @@ public class App {
         });
         injuriesButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                //new InjuryReserveManagement();
+                InjuryReserveManagement injury = new InjuryReserveManagement();
+                injury.displayForm();
             }
         });
         contractButton.addActionListener(new ActionListener() {
