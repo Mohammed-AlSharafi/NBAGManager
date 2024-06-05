@@ -1,12 +1,9 @@
 package com.group.NBAGManager;
 
 import com.group.NBAGManager.LoginPage.GuiCreator;
-import com.group.NBAGManager.model.CurrentSession;
 import com.group.NBAGManager.model.Player;
 import com.group.NBAGManager.model.RepositoryHandler;
-import com.group.NBAGManager.model.User;
 import com.group.NBAGManager.repository.TeamRepository;
-import com.group.NBAGManager.repository.UserRepository;
 
 import javax.swing.*;
 import java.awt.*;
