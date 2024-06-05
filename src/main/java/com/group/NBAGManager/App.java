@@ -1,6 +1,9 @@
 package com.group.NBAGManager;
 
 import com.group.NBAGManager.model.Player;
+import com.group.NBAGManager.model.RepositoryHandler;
+import com.group.NBAGManager.model.User;
+import com.group.NBAGManager.repository.TeamRepository;
 
 import javax.swing.*;
 import java.awt.event.ActionEvent;
@@ -20,9 +23,13 @@ public class App {
     private JLabel heading;
     private JTable displayTable;
     private JScrollPane scroll;
+    private JList<Player> playersList;
     private JFrame frame;
+    private TeamRepository teamRepository;
 
     public App() {
+        teamRepository = RepositoryHandler.getInstance().getTeamRepository();
+
         addPlayerBtn.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent actionEvent) {
@@ -82,13 +89,15 @@ public class App {
     public void displayForm() {
         resetButton.setVisible(false);
 
-        frame = new JFrame("App");
-        frame.setContentPane(panelMain);
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.setSize(1000, 500);
-        frame.setLocationRelativeTo(null);
-        frame.setVisible(true);
-
+        displayForm(teamRepository.findAll());
+//        frame = new JFrame("App");
+//        frame.setContentPane(panelMain);
+//        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+//        frame.setSize(1000, 500);
+//        frame.setLocationRelativeTo(null);
+//        frame.setVisible(true);
+//
+//        displayPlayers();
     }
 
     public void displayForm(List<Player> players) {
@@ -98,6 +107,15 @@ public class App {
         frame.setSize(1000, 500);
         frame.setLocationRelativeTo(null);
         frame.setVisible(true);
+
+        displayPlayers(players);
+    }
+
+    private void displayPlayers(List<Player> players) {
+        DefaultListModel<Player> model = new DefaultListModel<>();
+        players.forEach(model::addElement);
+
+        playersList.setModel(model);
     }
 
     public static void main(String[] args) {

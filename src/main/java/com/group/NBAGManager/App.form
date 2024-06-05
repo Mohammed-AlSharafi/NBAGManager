@@ -85,9 +85,11 @@
         <properties/>
         <border type="none"/>
         <children>
-          <component id="f1480" class="javax.swing.JTable" binding="displayTable">
+          <component id="e9d21" class="javax.swing.JList" binding="playersList">
             <constraints/>
-            <properties/>
+            <properties>
+              <model/>
+            </properties>
           </component>
         </children>
       </scrollpane>
