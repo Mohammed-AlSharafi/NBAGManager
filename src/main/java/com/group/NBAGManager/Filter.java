@@ -24,7 +24,7 @@ public class Filter {
     private JLabel reboundsLabel;
     private JPanel panelMain;
     private JButton searchButton;
-    private JComboBox positionChoice;
+    private JComboBox<String> positionChoice;
     private JTextField pointsField;
     private JTextField heightField1;
     private JTextField weightField1;
@@ -181,7 +181,6 @@ public class Filter {
 
     private void createUIComponents() {
         // TODO: place custom component creation code here
-        JButton customSearchButton = GuiCreator.createButton("Search", new Font("Roboto Mono", Font.BOLD, 15), Color.decode("#646669"), Color.decode("#323437"), false, 1, 4);
-        searchButton = customSearchButton;
+        searchButton = GuiCreator.createButton("Search", new Font("Roboto Mono", Font.BOLD, 15), Color.decode("#646669"), Color.decode("#323437"), false, 1, 4);
     }
 }
