@@ -1,14 +1,15 @@
 package com.group.NBAGManager;
 
-import com.group.NBAGManager.LoginPage.LoginMenu;
 import com.group.NBAGManager.model.CurrentSession;
+import com.group.NBAGManager.model.Player;
+import com.group.NBAGManager.model.RepositoryHandler;
 import com.group.NBAGManager.model.User;
-import com.group.NBAGManager.repository.*;
+import com.group.NBAGManager.repository.UserRepository;
 
 import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.io.IOException;
+import java.util.List;
 
 public class App {
     private JButton addPlayerBtn;
@@ -19,11 +20,11 @@ public class App {
     private JButton rankingButton;
     private JButton journeyButton;
     private JButton filteredSearchButton;
+    private JButton resetButton;
     private JLabel heading;
-    private JList playersList;
-    private JTextField textField1;
-    private JPasswordField passwordField1;
-    private JSpinner spinner1;
+    private JTable displayTable;
+    private JScrollPane scroll;
+    private JFrame frame;
 
     public App() {
         addPlayerBtn.addActionListener(new ActionListener() {
@@ -68,14 +69,35 @@ public class App {
         filteredSearchButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
+                frame.dispose();
                 Filter filter = new Filter();
+                filter.displayForm();
+            }
+        });
+        resetButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                frame.dispose();
+                new App().displayForm();
             }
         });
     }
 
-    public void displayForm(){
-        JFrame frame = new JFrame("App");
-        frame.setContentPane(new App().panelMain);
+    public void displayForm() {
+        resetButton.setVisible(false);
+
+        frame = new JFrame("App");
+        frame.setContentPane(panelMain);
+        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frame.setSize(1000, 500);
+        frame.setLocationRelativeTo(null);
+        frame.setVisible(true);
+
+    }
+
+    public void displayForm(List<Player> players) {
+        frame = new JFrame("App");
+        frame.setContentPane(panelMain);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setSize(1000, 500);
         frame.setLocationRelativeTo(null);
