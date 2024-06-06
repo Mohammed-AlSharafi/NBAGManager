@@ -1,5 +1,6 @@
 package com.group.NBAGManager;
 
+import com.group.NBAGManager.LoginPage.GuiCreator;
 import com.group.NBAGManager.model.CurrentSession;
 import com.group.NBAGManager.model.Graph.JourneyGraphHelper;
 import com.group.NBAGManager.model.Graph.WeightedGraph;
@@ -132,5 +133,10 @@ public class Journey {
         nextLocation.setText(shortestPath.get(nextLocationIndex));
         nextLocation.revalidate();
         nextLocation.repaint();
+    }
+
+    private void createUIComponents() {
+        JButton nextButton = GuiCreator.createButton("Login", new Font("Roboto Mono", Font.BOLD, 15), Color.decode("#646669"), Color.decode("#323437"), false, 1, 4);
+        getNextLocationBtn = nextButton;
     }
 }
