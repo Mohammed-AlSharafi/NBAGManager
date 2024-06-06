@@ -20,7 +20,10 @@ public class Player {
     }
 
     //used as an enclosure for player(s) coming from db.players
-    public Player(int playerId, String firstName, String lastName, int age, double height, double weight, String position, double points, double rebounds, double assists, double steals, double blocks, double compositeScore) {
+    public Player(int playerId, String firstName, String lastName, int age, double height, double weight,
+                  String position, double points, double rebounds, double assists, double steals, double blocks,
+                  double compositeScore)
+    {
         this.playerId = playerId;
         this.firstName = firstName;
         this.lastName = lastName;
@@ -37,7 +40,11 @@ public class Player {
     }
 
     //used as an enclosure for player(s) coming from db.teams
-    public Player(int playerId, String firstName, String lastName, int age, double height, double weight, String position, double salary, double points, double rebounds, double assists, double steals, double blocks, double compositeScore) {
+    public Player(int playerId, String firstName, String lastName, int age, double height, double weight,
+                  String position, double salary, double points, double rebounds, double assists, double steals,
+                  double blocks, double compositeScore, boolean isInjured, LocalDateTime injuryDateTime,
+                  String injuryDescription, boolean isContractRenewQueued) {
+
         this.playerId = playerId;
         this.firstName = firstName;
         this.lastName = lastName;
@@ -52,8 +59,13 @@ public class Player {
         this.steals = steals;
         this.blocks = blocks;
         this.compositeScore = compositeScore;
+        this.isInjured = isInjured;
+        this.injuryDateTime = injuryDateTime;
+        this.injuryDescription = injuryDescription;
+        this.isContractRenewQueued = isContractRenewQueued;
     }
 
+    //instance variables
     private int playerId;
     private String firstName;
     private String lastName;
@@ -68,8 +80,10 @@ public class Player {
     private double steals;
     private double blocks;
     private double compositeScore;
+    private boolean isInjured;
+    private LocalDateTime injuryDateTime;
+    private String injuryDescription;
     private boolean isContractRenewQueued;
-    private LocalDateTime injuryDate;
 
     public int getPlayerId() {
         return playerId;
@@ -177,6 +191,38 @@ public class Player {
 
     public void setCompositeScore(double compositeScore) {
         this.compositeScore = compositeScore;
+    }
+
+    public boolean isInjured() {
+        return isInjured;
+    }
+
+    public void setInjured(boolean injured) {
+        isInjured = injured;
+    }
+
+    public LocalDateTime getInjuryDateTime() {
+        return injuryDateTime;
+    }
+
+    public void setInjuryDateTime(LocalDateTime injuryDateTime) {
+        this.injuryDateTime = injuryDateTime;
+    }
+
+    public String getInjuryDescription() {
+        return injuryDescription;
+    }
+
+    public void setInjuryDescription(String injuryDescription) {
+        this.injuryDescription = injuryDescription;
+    }
+
+    public boolean isContractRenewQueued() {
+        return isContractRenewQueued;
+    }
+
+    public void setContractRenewQueued(boolean contractRenewQueued) {
+        isContractRenewQueued = contractRenewQueued;
     }
 
     // Method to calculate composite performance score
