@@ -100,7 +100,7 @@ public class TeamRepository extends Repository<Player> implements TeamRepository
                         rs.getDouble("blocks"),
                         rs.getDouble("compositeScore"),
                         rs.getBoolean("isInjured"),
-                        rs.getTimestamp("injuryDateTime").toLocalDateTime(),
+                        rs.getTimestamp("injuryDateTime") == null? null : rs.getTimestamp("injuryDateTime").toLocalDateTime(),
                         rs.getString("injuryDescription"),
                         rs.getBoolean("isContractRenewQueued")
                 );
