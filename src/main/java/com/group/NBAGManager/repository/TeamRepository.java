@@ -49,12 +49,13 @@ public class TeamRepository extends Repository<Player> implements TeamRepository
                         rs.getDouble("height"),
                         rs.getDouble("weight"),
                         rs.getString("position"),
-                        rs.getDouble("Salary"),
+                        rs.getDouble("salary"),
                         rs.getDouble("points"),
                         rs.getDouble("rebounds"),
                         rs.getDouble("assists"),
                         rs.getDouble("steals"),
-                        rs.getDouble("blocks")
+                        rs.getDouble("blocks"),
+                        rs.getDouble("compositeScore")
                 );
             }
             return player;
@@ -81,12 +82,13 @@ public class TeamRepository extends Repository<Player> implements TeamRepository
                         rs.getDouble("height"),
                         rs.getDouble("weight"),
                         rs.getString("position"),
-                        rs.getDouble("Salary"),
+                        rs.getDouble("salary"),
                         rs.getDouble("points"),
                         rs.getDouble("rebounds"),
                         rs.getDouble("assists"),
                         rs.getDouble("steals"),
-                        rs.getDouble("blocks")
+                        rs.getDouble("blocks"),
+                        rs.getDouble("compositeScore")
                 );
                 players.add(player);
             }
