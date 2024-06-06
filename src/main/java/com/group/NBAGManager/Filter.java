@@ -184,12 +184,7 @@ public class Filter {
         });
     }
 
-    public static void main(String[] args) {
-        new Filter().displayForm();
-    }
-
     private void createUIComponents() {
-        // TODO: place custom component creation code here
         searchButton = GuiCreator.createButton("Search", new Font("Roboto Mono", Font.BOLD, 15), Color.decode("#646669"), Color.decode("#323437"), false, 1, 4);
     }
 }
