@@ -35,7 +35,10 @@ public class TeamRepository extends Repository<Player> implements TeamRepository
         User currentUser = CurrentSession.getInstance().getLoggedInUser();
         Player player = null;
         try{
-            String query = "SELECT players.*, teams.salary FROM players INNER JOIN teams ON players.playerId = teams.playerId INNER JOIN users ON teams.userId = users.userId WHERE players.playerId = ? AND users.userId = ?";
+            String query = "SELECT players.*, teams.salary, teams.isInjured, teams.injuryDateTime," +
+                    " teams.injuryDescription, teams.isContractRenewQueued FROM players INNER JOIN teams" +
+                    " ON players.playerId = teams.playerId INNER JOIN users ON teams.userId = users.userId" +
+                    " WHERE players.playerId = ? AND users.userId = ?";
             PreparedStatement pStatement = con.prepareStatement(query);
             pStatement.setInt(1, id);
             pStatement.setInt(2, currentUser.getUserId());
@@ -55,7 +58,11 @@ public class TeamRepository extends Repository<Player> implements TeamRepository
                         rs.getDouble("assists"),
                         rs.getDouble("steals"),
                         rs.getDouble("blocks"),
-                        rs.getDouble("compositeScore")
+                        rs.getDouble("compositeScore"),
+                        rs.getBoolean("isInjured"),
+                        rs.getTimestamp("injuryDateTime") == null? null : rs.getTimestamp("injuryDateTime").toLocalDateTime(),
+                        rs.getString("injuryDescription"),
+                        rs.getBoolean("isContractRenewQueued")
                 );
             }
             return player;
@@ -69,7 +76,10 @@ public class TeamRepository extends Repository<Player> implements TeamRepository
         User currentUser = CurrentSession.getInstance().getLoggedInUser();
         List<Player> players = new ArrayList<>();
         try{
-            String query = "SELECT players.*, teams.salary FROM players INNER JOIN teams ON players.playerId = teams.playerId INNER JOIN users ON teams.userId = users.userId WHERE users.userId = ?";
+            String query = "SELECT players.*, teams.salary, teams.isInjured, teams.injuryDateTime," +
+                    " teams.injuryDescription, teams.isContractRenewQueued FROM players INNER JOIN teams" +
+                    " ON players.playerId = teams.playerId INNER JOIN users ON teams.userId = users.userId" +
+                    " WHERE users.userId = ?";
             PreparedStatement pStatement = con.prepareStatement(query);
             pStatement.setInt(1,currentUser.getUserId());
             ResultSet rs = pStatement.executeQuery();
@@ -88,7 +98,11 @@ public class TeamRepository extends Repository<Player> implements TeamRepository
                         rs.getDouble("assists"),
                         rs.getDouble("steals"),
                         rs.getDouble("blocks"),
-                        rs.getDouble("compositeScore")
+                        rs.getDouble("compositeScore"),
+                        rs.getBoolean("isInjured"),
+                        rs.getTimestamp("injuryDateTime").toLocalDateTime(),
+                        rs.getString("injuryDescription"),
+                        rs.getBoolean("isContractRenewQueued")
                 );
                 players.add(player);
             }
@@ -102,11 +116,16 @@ public class TeamRepository extends Repository<Player> implements TeamRepository
     public void update(Player obj) {
         User currentUser = CurrentSession.getInstance().getLoggedInUser();
         try{
-            String query = "UPDATE teams SET salary = ? WHERE playerId = ? AND userId = ?";
+            String query = "UPDATE teams SET salary = ?, isInjured = ?, injuryDateTime = ?, injuryDescription = ?," +
+                    " isContractRenewQueued = ? WHERE playerId = ? AND userId = ?";
             PreparedStatement pStatement = con.prepareStatement(query);
             pStatement.setDouble(1, obj.getSalary());
-            pStatement.setInt(2, obj.getPlayerId());
-            pStatement.setInt(3, currentUser.getUserId());
+            pStatement.setBoolean(2, obj.isInjured());
+            pStatement.setTimestamp(3, java.sql.Timestamp.valueOf(obj.getInjuryDateTime()));
+            pStatement.setString(4, obj.getInjuryDescription());
+            pStatement.setBoolean(5, obj.isContractRenewQueued());
+            pStatement.setInt(6, obj.getPlayerId());
+            pStatement.setInt(7, currentUser.getUserId());
             pStatement.executeUpdate();
         }catch (SQLException e){
             System.out.println(e);
