@@ -1,6 +1,6 @@
 package com.group.NBAGManager;
 
-import com.group.NBAGManager.LoginPage.GuiCreator;
+import com.group.NBAGManager.model.GuiCreator;
 import com.group.NBAGManager.model.Player;
 import com.group.NBAGManager.model.RepositoryHandler;
 import com.group.NBAGManager.repository.TeamRepository;
