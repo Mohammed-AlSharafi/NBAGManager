@@ -1,6 +1,6 @@
 package com.group.NBAGManager;
 
-import com.group.NBAGManager.LoginPage.GuiCreator;
+import com.group.NBAGManager.model.GuiCreator;
 import com.group.NBAGManager.model.Player;
 import com.group.NBAGManager.model.RepositoryHandler;
 import com.group.NBAGManager.repository.TeamRepository;
@@ -8,7 +8,6 @@ import com.group.NBAGManager.repository.TeamRepository;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
-import java.util.*;
 import java.util.List;
 
 public class PlayerPerformanceRanking {
@@ -18,24 +17,10 @@ public class PlayerPerformanceRanking {
 
         teamRepository = RepositoryHandler.getInstance().getTeamRepository();
         //store all the players in the current user's team in a list
-        List<Player> players2 = teamRepository.findAll();
+        List<Player> players = teamRepository.findAll();
         //System.out.println("Player2: " + players2.toString());
 
-        //make a new ArrayList to store the players with their composite score based on performancee
-        ArrayList<PlayerPerformance> players = new ArrayList<>();
-        for (int i = 0; players2.size() > i; i++) {
-            players.add(new PlayerPerformance(players2.get(i).getFirstName() + " " + players2.get(i).getLastName(),
-                    players2.get(i).getPosition(), players2.get(i).getPoints(), players2.get(i).getRebounds(),
-                    players2.get(i).getSteals(), players2.get(i).getAssists(), players2.get(i).getBlocks(), 0.0));
-            // call the calculatePerfomanceScore method with to calculate the players perfomance score based on their stats
-            double compositeScore = players.get(i).calculatePerformanceScore();
-            // save the performance score into the composotieScore element in the PlayerPerformance object
-            players.get(i).compositeScore = compositeScore;
-        }
-
         // Sort players based on composite performance score
-        //players.sort(Comparator.comparingDouble(PlayerPerformance::calculatePerformanceScore).reversed());
-
         PlayerPerformanceRanking.selectionSort(players);
 
         // set up the gui main frame
@@ -46,9 +31,9 @@ public class PlayerPerformanceRanking {
         //convert playerPerformances list to a format suitable for JList
         DefaultListModel<String> listModel = new DefaultListModel<>();
         for (int i = 0; players.size() > i; i++) {
-            PlayerPerformance player = players.get(i);
-            listModel.addElement((i + 1) + ". " + players.get(i).name + " - Composite Performance Score: "
-                    + players.get(i).compositeScore);
+            Player player = players.get(i);
+            listModel.addElement((i + 1) + ". " + players.get(i).getFirstName()+" "+players.get(i).getLastName() + " - Composite Performance Score: "
+                    + players.get(i).getCompositeScore());
         }
 
         JList<String> playerList = new JList<>(listModel);
@@ -146,6 +131,8 @@ public class PlayerPerformanceRanking {
             }
         });
 
+        //display the window in the middle of the screen
+        frame.setLocationRelativeTo(null);
         //display the window
         frame.setVisible(true);
         //set it to not be able to resize
@@ -153,7 +140,7 @@ public class PlayerPerformanceRanking {
     }
 
     //Selection Sort method to sort the players based on the calculated composite score
-    public static void selectionSort(ArrayList<PlayerPerformance> players) {
+    public static void selectionSort(List<Player> players) {
         for (int i = 0; i < players.size() - 1; i++) {
 
             int minIndex = i;
@@ -164,53 +151,9 @@ public class PlayerPerformanceRanking {
             }
 
             //swap the found minimum element with the first element
-            PlayerPerformance temp = players.get(minIndex);
+            Player temp = players.get(minIndex);
             players.set(minIndex, players.get(i));
             players.set(i, temp);
         }
-    }
-}
-
-
-// specific PlayerPerformance class for the PlayerPerformanceRanking
-class PlayerPerformance {
-    String name;
-    String position;
-    double avgPoints;
-    double rebounds;
-    double steals;
-    double assists;
-    double blocks;
-    double compositeScore;
-
-    // Constructor
-    public PlayerPerformance(String name, String position, double avgPoints, double rebounds, double steals, double assists, double blocks, double compositeScore) {
-        this.name = name;
-        this.position = position;
-        this.avgPoints = avgPoints;
-        this.rebounds = rebounds;
-        this.steals = steals;
-        this.assists = assists;
-        this.blocks = blocks;
-        this.compositeScore = compositeScore;
-    }
-
-    // Method to calculate composite performance score
-    public double calculatePerformanceScore() {
-        // Define weights for different criteria based on player's position
-        double pointsWeight = 1.7;
-        double reboundsWeight = (position.equals("Center") || position.equals("Forward")) ? 3 : 1.0;
-        double stealsWeight = (position.equals("Guard")) ? 3 : 1.0;
-        double assistsWeight = (position.equals("Guard")) ? 3 : 1.0;
-        double blocksWeight = (position.equals("Center") || position.equals("Forward")) ? 3 : 1.0;
-
-        // Calculate composite performance score
-        double performanceScore = avgPoints * pointsWeight + rebounds * reboundsWeight + steals * stealsWeight + assists * assistsWeight + blocks * blocksWeight;
-        return performanceScore;
-    }
-
-    //getter to get the compositeScore
-    public double getCompositeScore() {
-        return compositeScore;
     }
 }
