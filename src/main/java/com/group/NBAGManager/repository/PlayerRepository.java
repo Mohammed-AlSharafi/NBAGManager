@@ -30,12 +30,13 @@ public class PlayerRepository extends Repository<Player> implements PlayerReposi
         pStatement.setDouble(9, obj.getAssists());
         pStatement.setDouble(10, obj.getSteals());
         pStatement.setDouble(11, obj.getBlocks());
+        pStatement.setDouble(12, obj.getCompositeScore());
     }
 
     //add player to database
     public void save(Player obj) {
         try{
-            String query = "INSERT INTO players (firstName, lastName, age, height, weight, position, points, rebounds, assists, steals, blocks) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+            String query = "INSERT INTO players (firstName, lastName, age, height, weight, position, points, rebounds, assists, steals, blocks, compositeScore) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
             PreparedStatement pStatement = con.prepareStatement(query);
             setPlayerParameters(pStatement, obj);
             pStatement.executeUpdate();
@@ -66,7 +67,8 @@ public class PlayerRepository extends Repository<Player> implements PlayerReposi
                         rs.getDouble("rebounds"),
                         rs.getDouble("assists"),
                         rs.getDouble("steals"),
-                        rs.getDouble("blocks")
+                        rs.getDouble("blocks"),
+                        rs.getDouble("compositeScore")
                 );
             }
             return player;
@@ -96,7 +98,8 @@ public class PlayerRepository extends Repository<Player> implements PlayerReposi
                         rs.getDouble("rebounds"),
                         rs.getDouble("assists"),
                         rs.getDouble("steals"),
-                        rs.getDouble("blocks")
+                        rs.getDouble("blocks"),
+                        rs.getDouble("compositeScore")
                 );
                 players.add(player);
             }
@@ -110,10 +113,10 @@ public class PlayerRepository extends Repository<Player> implements PlayerReposi
     //update player using player object
     public void update(Player obj) {
         try{
-            String query = "UPDATE players SET firstName = ?, lastName = ?, age = ?, height = ?, weight = ?, position = ?, points = ?, rebounds = ?, assists = ?, steals = ?, blocks = ? WHERE playerId = ?";
+            String query = "UPDATE players SET firstName = ?, lastName = ?, age = ?, height = ?, weight = ?, position = ?, points = ?, rebounds = ?, assists = ?, steals = ?, blocks = ?, compositeScore = ? WHERE playerId = ?";
             PreparedStatement pStatement = con.prepareStatement(query);
             setPlayerParameters(pStatement, obj);
-            pStatement.setInt(12, obj.getPlayerId());
+            pStatement.setInt(13, obj.getPlayerId());
             pStatement.executeUpdate();
         }catch (SQLException e){
             System.out.println(e);
