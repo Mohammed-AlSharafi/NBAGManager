@@ -1,6 +1,6 @@
 package com.group.NBAGManager;
 
-import com.group.NBAGManager.LoginPage.GuiCreator;
+import com.group.NBAGManager.model.GuiCreator;
 import com.group.NBAGManager.model.CurrentSession;
 import com.group.NBAGManager.model.Graph.JourneyGraphHelper;
 import com.group.NBAGManager.model.Graph.WeightedGraph;
