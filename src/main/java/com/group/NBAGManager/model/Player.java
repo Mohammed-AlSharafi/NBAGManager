@@ -242,20 +242,14 @@ public class Player {
 
     @Override
     public String toString() {
-        return "Player{" +
-                "id=" + playerId +
-                ", firstName='" + firstName + '\'' +
-                ", lastName='" + lastName + '\'' +
-                ", age=" + age +
-                ", height=" + height +
-                ", weight=" + weight +
-                ", position='" + position + '\'' +
-                ", Salary=" + Salary +
-                ", points=" + points +
-                ", rebounds=" + rebounds +
-                ", assists=" + assists +
-                ", steals=" + steals +
-                ", blocks=" + blocks +
-                '}';
+        String name = firstName + " " + lastName;
+
+        String sb = String.format("%-25s %-9s %-12d %-12s %-8.2f %n", name, "Age:", age, "Points:", points) +
+                String.format("%-25s %-9s %-12.2f %-12s %-8.2f %n", "", "Height:", height, "Rebounds:", rebounds) +
+                String.format("%-25s %-9s %-12.2f %-12s %-8.2f %n", "", "Weight:", weight, "Assists:", assists) +
+                String.format("%-25s %-9s %-12s %-12s %-8.2f %n", "", "Position:", position, "Steals:", steals) +
+                String.format("%-25s %-9s %-12.2f %-12s %-8.2f %n", "", "Salary:", Salary, "Blocks:", blocks);
+
+        return sb;
     }
 }
