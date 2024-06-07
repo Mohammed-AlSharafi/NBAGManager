@@ -142,6 +142,11 @@ static class CustomCellRenderer extends DefaultTableCellRenderer {
         });
     }
 
+    public static void main(String[] args) {
+        CurrentSession.getInstance().setLoggedInUser(RepositoryHandler.getInstance().getUserRepository().findUserByUsername("testUser"));
+        AddPlayer addPlayer = new AddPlayer();
+        addPlayer.displayForm();
+    }
     private void handleRowClick(Player player){
         if(checkPlayer(player)){
             JOptionPane.showMessageDialog(null, "Player already in team.");
