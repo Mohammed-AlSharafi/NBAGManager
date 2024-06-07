@@ -112,11 +112,13 @@ public class AddPlayer {
         playersTable.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
-                int row = playersTable.rowAtPoint(e.getPoint());
-                int column = playersTable.columnAtPoint(e.getPoint());
-                if(column==0&&!(row<0)){
-                    Player player = (Player) playersTable.getValueAt(row,column);
-                    handleRowClick(player);
+                if(e.getClickCount()==2){
+                    int row = playersTable.rowAtPoint(e.getPoint());
+                    int column = playersTable.columnAtPoint(e.getPoint());
+                    if(column==0&&!(row<0)){
+                        Player player = (Player) playersTable.getValueAt(row,column);
+                        handleRowClick(player);
+                    }
                 }
             }
         });
