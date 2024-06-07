@@ -128,13 +128,15 @@ public class RemovePlayer {
         table1.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
-                int row = table1.rowAtPoint(e.getPoint());
-                int column = table1.columnAtPoint(e.getPoint());
-                if(column==0&&!(row<0)){
-                    Player player = (Player) table1.getValueAt(row,column);
-                    handleRowClick(row, player);
+                if(e.getClickCount()==2){
+                    int row = table1.rowAtPoint(e.getPoint());
+                    int column = table1.columnAtPoint(e.getPoint());
+                    if(column==0&&!(row<0)){
+                        Player player = (Player) table1.getValueAt(row,column);
+                        handleRowClick(row, player);
+                    }
                 }
-            }
+                }
         });
     }
 
@@ -150,15 +152,15 @@ public class RemovePlayer {
                 model.removeRow(row);
             }
             if(list.size()==10)JOptionPane.showMessageDialog(null,"Team size is less than minimum.");
-            else if(checkTeamPositions()>=0){
-                int counter = checkTeamPositions();
-                if(counter==0)JOptionPane.showMessageDialog(null,"The number of Centers in your team is less than the minimum(2).");
-                else if(counter==1)JOptionPane.showMessageDialog(null,"The number of Guards in your team is less than the minimum(2).");
+            else if(checkTeamPositions(player)<2){
+                String position = player.getPosition();
+                if(position.equals("Center"))JOptionPane.showMessageDialog(null,"The number of Centers in your team is less than the minimum(2).");
+                else if(position.equals("Guard"))JOptionPane.showMessageDialog(null,"The number of Guards in your team is less than the minimum(2).");
                 else JOptionPane.showMessageDialog(null,"The number of Forwards in your team is less than the minimum(2).");
             }
             else{
                 repo.deleteById(player.getPlayerId());
-                JOptionPane.showConfirmDialog(null, player.getFirstName()+" "+player.getLastName()+" has been removed.");
+                JOptionPane.showMessageDialog(null, player.getFirstName()+" "+player.getLastName()+" has been removed.");
                 DefaultTableModel model = (DefaultTableModel) table1.getModel();
                 model.removeRow(row);
             }
@@ -187,27 +189,18 @@ public class RemovePlayer {
         return stat.toString();
     }
 
-
-    private boolean checkTeamSize(){
-        return list.size()>=10;
-    }
-
-    private int checkTeamPositions(){
-        int[] pos_counter = {0,0,0};
-        for(int i = 0;i<list.size();i++){
-             Player player = list.get(i);
-             if(player.getPosition().equals("Center"))pos_counter[0]+=1;
-             else if(player.getPosition().equals("Forward"))pos_counter[1]+=1;
-             else pos_counter[2]+=1;
+    private int checkTeamPositions(Player player){
+        String role = player.getPosition();
+        int count = 0;
+        for(Player players:list){
+            if(players.getPosition().equals(role)){
+                count+=1;
+            }
         }
-        if(pos_counter[0]<2)return 0;
-        else if(pos_counter[1]<2)return 1;
-        else if(pos_counter[2]<2)return 2;
-        else return -1;
+        return count;
     }
 
     public void displayFull(){
         displayForm();
     }
-
 }
