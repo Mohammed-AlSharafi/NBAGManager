@@ -1,7 +1,7 @@
 package com.group.NBAGManager.LoginPage;
 import com.group.NBAGManager.App;
-import com.group.NBAGManager.PlayerPerformanceRanking;
 import com.group.NBAGManager.model.CurrentSession;
+import com.group.NBAGManager.model.GuiCreator;
 import com.group.NBAGManager.model.RepositoryHandler;
 import com.group.NBAGManager.model.User;
 import com.group.NBAGManager.repository.UserRepository;
@@ -10,8 +10,6 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
 
 
 public class LoginMenu extends JFrame {
