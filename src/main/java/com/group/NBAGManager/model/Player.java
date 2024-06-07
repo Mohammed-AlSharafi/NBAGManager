@@ -2,7 +2,7 @@ package com.group.NBAGManager.model;
 
 import java.time.LocalDateTime;
 
-public class Player {
+public class Player implements Comparable<Player> {
     //used for creating and adding player to db.players
     public Player(String firstName, String lastName, int age, double height, double weight, String position, double points, double rebounds, double assists, double steals, double blocks) {
         this.firstName = firstName;
@@ -103,6 +103,10 @@ public class Player {
 
     public void setLastName(String lastName) {
         this.lastName = lastName;
+    }
+
+    public String getFullName() {
+        return firstName + " " + lastName;
     }
 
     public int getAge() {
@@ -251,5 +255,18 @@ public class Player {
                 String.format("%-25s %-9s %-12.2f %-12s %-8.2f %n", "", "Salary:", Salary, "Blocks:", blocks);
 
         return sb;
+    }
+
+    @Override
+    public int compareTo(Player o) {
+        return Integer.compare(playerId, o.getPlayerId());
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if(obj instanceof Player player){
+            return playerId == player.getPlayerId();
+        }
+        return false;
     }
 }

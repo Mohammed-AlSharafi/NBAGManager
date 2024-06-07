@@ -6,6 +6,10 @@ import com.group.NBAGManager.model.RepositoryHandler;
 import com.group.NBAGManager.repository.TeamRepository;
 
 import javax.swing.*;
+import javax.swing.text.AttributeSet;
+import javax.swing.text.BadLocationException;
+import javax.swing.text.DocumentFilter;
+import javax.swing.text.PlainDocument;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -42,6 +46,44 @@ public class Filter {
     private JLabel weightLesserThanLabel;
     private JFrame frame;
 
+    static class CustomDocument extends PlainDocument {
+        public CustomDocument() {
+            super();
+            setDocumentFilter(new DocumentFilter() {
+                @Override
+                public void insertString(FilterBypass fb, int offset, String string, AttributeSet attr) throws BadLocationException {
+                    StringBuilder sb = new StringBuilder();
+                    sb.append(fb.getDocument().getText(0, fb.getDocument().getLength()));
+                    sb.insert(offset, string);
+                    if (Filter.isNumericOrIsNull(sb.toString())) {
+                        super.insertString(fb, offset, string, attr);
+                    }
+                }
+
+                @Override
+                public void replace(FilterBypass fb, int offset, int length, String text, AttributeSet attrs) throws BadLocationException {
+                    StringBuilder sb = new StringBuilder();
+                    sb.append(fb.getDocument().getText(0, fb.getDocument().getLength()));
+                    int end = offset + length;
+                    sb.replace(offset, end, text);
+                    if (Filter.isNumericOrIsNull(sb.toString())) {
+                        super.replace(fb, offset, length, text, attrs);
+                    }
+                }
+
+                @Override
+                public void remove(FilterBypass fb, int offset, int length) throws BadLocationException {
+                    StringBuilder sb = new StringBuilder();
+                    sb.append(fb.getDocument().getText(0, fb.getDocument().getLength()));
+                    int end = offset + length;
+                    sb.delete(offset, end);
+                    if (Filter.isNumericOrIsNull(sb.toString())) {
+                        super.remove(fb, offset, length);
+                    }
+                }
+            });
+        }
+    }
 
     public Filter() {
         searchButton.addActionListener(new ActionListener() {
@@ -144,6 +186,16 @@ public class Filter {
                 new App().displayForm(selectedPlayers);
             }
         });
+
+        heightField1.setDocument(new CustomDocument());
+        heightField2.setDocument(new CustomDocument());
+        weightField1.setDocument(new CustomDocument());
+        weightField2.setDocument(new CustomDocument());
+        pointsField.setDocument(new CustomDocument());
+        reboundsField.setDocument(new CustomDocument());
+        assistsField.setDocument(new CustomDocument());
+        stealsField.setDocument(new CustomDocument());
+        blocksField.setDocument(new CustomDocument());
     }
 
     private static Double translateTextToDouble(String text) {
@@ -155,6 +207,11 @@ public class Filter {
     }
 
     private static boolean isNumeric(String text) {
+        for (char c: text.toCharArray()) {
+            if (Character.isAlphabetic(c)) {
+                return false;
+            }
+        }
         try {
             Double.parseDouble(text);
             return true;
@@ -168,7 +225,7 @@ public class Filter {
         return isNumeric(text) || isNull(text);
     }
 
-    public void displayForm(){
+    public void displayForm() {
         frame = new JFrame("Filter");
         frame.setContentPane(panelMain);
         frame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
