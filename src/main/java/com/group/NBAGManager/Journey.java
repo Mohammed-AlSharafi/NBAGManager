@@ -52,7 +52,7 @@ public class Journey {
         //setting the best route in the bestRoute text area
         bestRoute.setFont(bestRoute.getFont().deriveFont(Font.BOLD));
         StringBuilder shortestPathSB = new StringBuilder();
-        for(int i = 0; i < shortestPath.size(); i++){
+        for(int i = 0; i < shortestPath.size()-1; i++){ //excluding the last vertex (repeated vertex)
             shortestPathSB.append((i + 1))
                     .append(". ").append(shortestPath.get(i))
                     .append(" (")
@@ -60,6 +60,7 @@ public class Journey {
                     .append(")\n");
         }
         bestRoute.setText(shortestPathSB.toString());
+        System.out.println(shortestPathSB);
 
         //setting the total distance
         totalDistanceLbl.setText("Total Distance: " + journeyGraph.getTotalDistance(shortestPath) + " KMs");
