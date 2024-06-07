@@ -2,7 +2,7 @@
 <form xmlns="http://www.intellij.com/uidesigner/form/" version="1" bind-to-class="com.group.NBAGManager.RemovePlayer">
   <grid id="27dc6" binding="panelMain" layout-manager="BorderLayout" hgap="0" vgap="0">
     <constraints>
-      <xy x="20" y="20" width="500" height="450"/>
+      <xy x="20" y="20" width="500" height="493"/>
     </constraints>
     <properties/>
     <border type="none"/>
@@ -17,7 +17,7 @@
         </properties>
         <border type="none"/>
         <children>
-          <component id="dc984" class="javax.swing.JTable" binding="table1" default-binding="true">
+          <component id="dc984" class="javax.swing.JTable" binding="playersTable">
             <constraints/>
             <properties>
               <autoCreateColumnsFromModel value="true"/>
@@ -25,13 +25,18 @@
               <autoResizeMode value="2"/>
               <enabled value="true"/>
               <fillsViewportHeight value="false"/>
-              <preferredScrollableViewportSize width="450" height="2000"/>
-              <preferredSize width="600" height="2000"/>
               <requestFocusEnabled value="true"/>
             </properties>
           </component>
         </children>
       </scrollpane>
+      <component id="a655a" class="javax.swing.JTextField" binding="searchField">
+        <constraints border-constraint="South"/>
+        <properties>
+          <text value="Search..."/>
+          <toolTipText value="Search for a particular player"/>
+        </properties>
+      </component>
     </children>
   </grid>
   <inspectionSuppressions>

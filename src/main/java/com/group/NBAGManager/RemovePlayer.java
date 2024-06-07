@@ -10,37 +10,61 @@ import com.group.NBAGManager.model.Player;
 import com.group.NBAGManager.repository.TeamRepository;
 
 import java.awt.*;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
+import java.awt.event.*;
 import java.util.HashMap;
 import java.util.List;
 
-import java.awt.event.ComponentAdapter;
-import java.awt.event.ComponentEvent;
 import java.util.Map;
 
 public class RemovePlayer {
     private JPanel panelMain;
     private JScrollPane scrollPane;
-    private JTable table1;
+    private JTable playersTable;
+    private JTextField searchField;
     TeamRepository repo;
     private List<Player> list;
-    private Map<String, Player> playerMap2 = new HashMap<>();
+    private Map<String, Player> playerMap = new HashMap<>();
 
     public RemovePlayer(){
-        panelMain.setLayout(new BorderLayout());
-        repo = new TeamRepository();
+        repo = RepositoryHandler.getInstance().getTeamRepository();
+
         //returns the value of component being resized
-        table1.addComponentListener(new ComponentAdapter() {
+        playersTable.addComponentListener(new ComponentAdapter() {
             @Override
             public void componentResized(ComponentEvent e) {
                 super.componentResized(e);
-                System.out.println(table1.getSelectedRow());
+                System.out.println(playersTable.getSelectedRow());
             }
         });
         displayPlayers();
         addMouseListenerToTable();
-        panelMain.add(scrollPane, BorderLayout.CENTER);
+        searchField.addKeyListener(new KeyAdapter() {
+            @Override
+            public void keyReleased(KeyEvent e) {
+                String searchText = searchField.getText();
+                if (!searchText.isEmpty()) {
+                    scrollToPlayerByName(searchText);
+                }
+            }
+        });
+    }
+
+    private void scrollToPlayerByName(String playerName) {
+        DefaultTableModel model = (DefaultTableModel) playersTable.getModel();
+        for (int row = 0; row < model.getRowCount(); row++) {
+            Player player = getPlayerFromRow(row);
+            if ((player.getFirstName() + " " + player.getLastName()).toLowerCase().contains(playerName.toLowerCase())){
+                playersTable.setRowSelectionInterval(row, row);
+                return;
+            }
+        }
+//        JOptionPane.showMessageDialog(panelMain, "Player with name " + playerName + " not found.", "Info", JOptionPane.INFORMATION_MESSAGE);
+    }
+
+    private Player getPlayerFromRow(int row) {
+        DefaultTableModel model = (DefaultTableModel) playersTable.getModel();
+        String playerName = (String) model.getValueAt(row, 0);
+        return playerMap.get(playerName); // Retrieve player from the map
     }
 
     private void displayPlayers() {
@@ -62,7 +86,7 @@ public class RemovePlayer {
             data[i][8] = player.getAssists();
             data[i][9] = player.getSteals();
             data[i][10] = player.getBlocks();
-            playerMap2.put(playername,player);
+            playerMap.put(playername,player);
         }
 
         TableModel dataModel = new DefaultTableModel(data, columnNames) {
@@ -82,25 +106,25 @@ public class RemovePlayer {
             }
         };
 
-        table1.setModel(dataModel);
-        table1.setRowSorter(new TableRowSorter<>(dataModel));
+        playersTable.setModel(dataModel);
+        playersTable.setRowSorter(new TableRowSorter<>(dataModel));
 
         // Adjust column widths
-        table1.getColumnModel().getColumn(0).setPreferredWidth(170); // Name
-        table1.getColumnModel().getColumn(1).setPreferredWidth(60);  // Age
-        table1.getColumnModel().getColumn(2).setPreferredWidth(60);  // Height
-        table1.getColumnModel().getColumn(3).setPreferredWidth(60);  // Weight
-        table1.getColumnModel().getColumn(4).setPreferredWidth(100); // Position
-        table1.getColumnModel().getColumn(5).setPreferredWidth(70); // Salary
-        table1.getColumnModel().getColumn(6).setPreferredWidth(70); // Points
-        table1.getColumnModel().getColumn(7).setPreferredWidth(70); // Rebounds
-        table1.getColumnModel().getColumn(8).setPreferredWidth(70); // Assists
-        table1.getColumnModel().getColumn(9).setPreferredWidth(70); // Steals
-        table1.getColumnModel().getColumn(10).setPreferredWidth(70); // Blocks
+        playersTable.getColumnModel().getColumn(0).setPreferredWidth(170); // Name
+        playersTable.getColumnModel().getColumn(1).setPreferredWidth(60);  // Age
+        playersTable.getColumnModel().getColumn(2).setPreferredWidth(60);  // Height
+        playersTable.getColumnModel().getColumn(3).setPreferredWidth(60);  // Weight
+        playersTable.getColumnModel().getColumn(4).setPreferredWidth(100); // Position
+        playersTable.getColumnModel().getColumn(5).setPreferredWidth(70); // Salary
+        playersTable.getColumnModel().getColumn(6).setPreferredWidth(70); // Points
+        playersTable.getColumnModel().getColumn(7).setPreferredWidth(70); // Rebounds
+        playersTable.getColumnModel().getColumn(8).setPreferredWidth(70); // Assists
+        playersTable.getColumnModel().getColumn(9).setPreferredWidth(70); // Steals
+        playersTable.getColumnModel().getColumn(10).setPreferredWidth(70); // Blocks
 
         // Set custom renderer for all columns
-        for (int i = 0; i < table1.getColumnCount(); i++) {
-            table1.getColumnModel().getColumn(i).setCellRenderer(new CustomCellRenderer());
+        for (int i = 0; i < playersTable.getColumnCount(); i++) {
+            playersTable.getColumnModel().getColumn(i).setCellRenderer(new CustomCellRenderer());
         }
     }
 
@@ -123,7 +147,7 @@ public class RemovePlayer {
 
     public void displayForm(){
         JFrame frame = new JFrame("RemovePlayer");
-        frame.setContentPane(new RemovePlayer().panelMain);
+        frame.setContentPane(panelMain);
         frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         frame.setSize(1250,600);
         frame.setLocationRelativeTo(null);
@@ -132,15 +156,15 @@ public class RemovePlayer {
     }
 
     private void addMouseListenerToTable(){
-        table1.addMouseListener(new MouseAdapter() {
+        playersTable.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
                 if(e.getClickCount()==2){
-                    int row = table1.rowAtPoint(e.getPoint());
-                    int column = table1.columnAtPoint(e.getPoint());
-                    if(column==0&&!(row<0)){
-                        String playername = (String) table1.getValueAt(row,column);
-                        Player player = playerMap2.get(playername);
+                    int row = playersTable.rowAtPoint(e.getPoint());
+                    int column = playersTable.columnAtPoint(e.getPoint());
+                    if(!(row<0)){
+                        String playerName = (String) playersTable.getValueAt(row,0);
+                        Player player = playerMap.get(playerName);
                         handleRowClick(row, player);
                     }
                 }
@@ -156,7 +180,7 @@ public class RemovePlayer {
             if(list.size()<10){
                 repo.deleteById(player.getPlayerId());
                 JOptionPane.showMessageDialog(null, player.getFirstName()+" "+player.getLastName()+" has been removed.");
-                DefaultTableModel model = (DefaultTableModel) table1.getModel();
+                DefaultTableModel model = (DefaultTableModel) playersTable.getModel();
                 model.removeRow(row);
             }
             else if(list.size()==10)JOptionPane.showMessageDialog(null,"Team size is less than minimum.");
@@ -169,7 +193,7 @@ public class RemovePlayer {
             else{
                 repo.deleteById(player.getPlayerId());
                 JOptionPane.showMessageDialog(null, player.getFirstName()+" "+player.getLastName()+" has been removed.");
-                DefaultTableModel model = (DefaultTableModel) table1.getModel();
+                DefaultTableModel model = (DefaultTableModel) playersTable.getModel();
                 model.removeRow(row);
             }
         }
