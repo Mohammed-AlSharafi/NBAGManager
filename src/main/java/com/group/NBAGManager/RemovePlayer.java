@@ -54,7 +54,7 @@ public class RemovePlayer {
         DefaultTableModel model = (DefaultTableModel) playersTable.getModel();
         for (int row = 0; row < model.getRowCount(); row++) {
             Player player = getPlayerFromRow(row);
-            if ((player.getFirstName() + " " + player.getLastName()).toLowerCase().contains(playerName.toLowerCase())){
+            if ((player.getFullName()).toLowerCase().contains(playerName.toLowerCase())){
                 playersTable.setRowSelectionInterval(row, row);
                 return;
             }

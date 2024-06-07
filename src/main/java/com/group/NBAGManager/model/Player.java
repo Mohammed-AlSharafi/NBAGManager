@@ -261,4 +261,12 @@ public class Player implements Comparable<Player> {
     public int compareTo(Player o) {
         return Integer.compare(playerId, o.getPlayerId());
     }
+
+    @Override
+    public boolean equals(Object obj) {
+        if(obj instanceof Player player){
+            return playerId == player.getPlayerId();
+        }
+        return false;
+    }
 }

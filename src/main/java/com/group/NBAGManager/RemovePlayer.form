@@ -33,7 +33,7 @@
       <component id="a655a" class="javax.swing.JTextField" binding="searchField">
         <constraints border-constraint="South"/>
         <properties>
-          <text value="Search..."/>
+          <text value=""/>
           <toolTipText value="Search for a particular player"/>
         </properties>
       </component>
