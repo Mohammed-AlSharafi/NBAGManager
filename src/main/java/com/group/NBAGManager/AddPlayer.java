@@ -139,7 +139,7 @@ public class AddPlayer {
                 int input = JOptionPane.showConfirmDialog(null, salaryfield, "Please enter player's salary. ", JOptionPane.OK_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE);
                 if(input == JOptionPane.OK_OPTION){
                     double salary = ((Number)salaryfield.getValue()).doubleValue();
-                    String salary_check = "Salary is under minimum. Players with more than 20.0 points per game have minimum salary.";
+                    String salary_check = "Salary is under minimum. Players with more than 20.0 points per game have minimum salary of 3000.";
                     salary_check+="Players with less points have minimum salary of 1000.";
                     salary_check+="Your current player has "+player.getPoints()+" points.";
                     if(checkPlayerSalary(player,salary))JOptionPane.showMessageDialog(null,salary_check);
