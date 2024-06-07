@@ -13,7 +13,6 @@ import java.awt.event.*;
 import java.text.NumberFormat;
 import java.util.*;
 import java.util.List;
-import java.util.stream.Collectors;
 
 public class AddPlayer {
     private JPanel panelMain;
@@ -22,6 +21,7 @@ public class AddPlayer {
     private PlayerRepository playerRepository;
     private JTable playersTable;
     private JScrollPane scroll;
+    private JTextField searchField;
     List<Player> team;
     public TeamRepository teamRepository;
     private Map<String, Player> playerMap = new HashMap<>();
@@ -39,15 +39,25 @@ public class AddPlayer {
         });
         setPlayersTable();
         addMouseFunction();
-        IDButtonFunction();
-        NameButtonFunction();
+        searchField.addKeyListener(new KeyAdapter() {
+            @Override
+            public void keyReleased(KeyEvent e) {
+                String searchText = searchField.getText();
+                if (!searchText.isEmpty()) {
+                    scrollToPlayerByName(searchText);
+                }
+            }
+        });
     }
 
     private void setPlayersTable(){
         List<Player> teamPlayers = teamRepository.findAll();
         List<Player> marketPlayers = playerRepository.findAll();
-        List<Player> unOwnedPlayers = new ArrayList<>(marketPlayers);
-
+        ArrayList<Player> unOwnedPlayers = new ArrayList<>(marketPlayers);
+        unOwnedPlayers.removeAll(teamPlayers);
+        unOwnedPlayers.forEach(player->{
+            System.out.println(player.getPlayerId());
+        });
 
         String[] columnNames = {
                 "Name", "Age", "Height", "Weight", "Position", "Salary",
@@ -180,32 +190,6 @@ static class CustomCellRenderer extends DefaultTableCellRenderer {
         }
     }
 
-    private void IDButtonFunction(){
-        SearchId.addMouseListener(new MouseAdapter() {
-            @Override
-            public void mouseClicked(MouseEvent e) {
-                JFormattedTextField searchField = setTextField();
-                int input = JOptionPane.showConfirmDialog(null, searchField, "Please enter player ID: ", JOptionPane.OK_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE);
-                if(input == JOptionPane.OK_OPTION) {
-                    int id = ((Number)searchField.getValue()).intValue();
-                    System.out.println(id);
-                    scrollToPlayerById(id);
-                }
-            }
-        });
-    }
-
-    private void scrollToPlayerById(int playerId) {
-        DefaultTableModel model = (DefaultTableModel) playersTable.getModel();
-        for (int row = 0; row < model.getRowCount(); row++) {
-            Player player = getPlayerFromRow(row);
-            if (player.getPlayerId() == playerId) {
-                playersTable.setRowSelectionInterval(row, row);
-                return;
-            }
-        }
-        JOptionPane.showMessageDialog(panelMain, "Player with ID " + playerId + " not found.", "Info", JOptionPane.INFORMATION_MESSAGE);
-    }
 
     private Player getPlayerFromRow(int row) {
         DefaultTableModel model = (DefaultTableModel) playersTable.getModel();
@@ -213,28 +197,16 @@ static class CustomCellRenderer extends DefaultTableCellRenderer {
         return playerMap.get(playerName); // Retrieve player from the map
     }
 
-        private void NameButtonFunction(){
-        SearchName.addMouseListener(new MouseAdapter() {
-            @Override
-            public void mouseClicked(MouseEvent e) {
-                String playerName = JOptionPane.showInputDialog(panelMain, "Enter Player First Name:");
-                if (playerName != null && !playerName.isEmpty()) {
-                    scrollToPlayerByName(playerName);
-                }
-            }
-        });
-    }
-
     private void scrollToPlayerByName(String playerName) {
         DefaultTableModel model = (DefaultTableModel) playersTable.getModel();
         for (int row = 0; row < model.getRowCount(); row++) {
             Player player = getPlayerFromRow(row);
-            if (player.getFirstName().equalsIgnoreCase(playerName)){
+            if ((player.getFullName()).toLowerCase().contains(playerName.toLowerCase())){
                 playersTable.setRowSelectionInterval(row, row);
                 return;
             }
         }
-        JOptionPane.showMessageDialog(panelMain, "Player with name " + playerName + " not found.", "Info", JOptionPane.INFORMATION_MESSAGE);
+//        JOptionPane.showMessageDialog(panelMain, "Player with name " + playerName + " not found.", "Info", JOptionPane.INFORMATION_MESSAGE);
     }
 
     private JFormattedTextField setTextField(){
