@@ -157,6 +157,7 @@ static class CustomCellRenderer extends DefaultTableCellRenderer {
         AddPlayer addPlayer = new AddPlayer();
         addPlayer.displayForm();
     }
+
     private void handleRowClick(Player player){
         if(checkPlayer(player)){
             JOptionPane.showMessageDialog(null, "Player already in team.");
@@ -189,7 +190,6 @@ static class CustomCellRenderer extends DefaultTableCellRenderer {
             }
         }
     }
-
 
     private Player getPlayerFromRow(int row) {
         DefaultTableModel model = (DefaultTableModel) playersTable.getModel();
