@@ -100,7 +100,7 @@ public class ContractExtensionQueue {
         JFrame frame = new JFrame("Contract");
         frame.setContentPane(panelMain);
         frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-        frame.setSize(1250, 700);
+        frame.setSize(1000, 500);
         frame.setLocationRelativeTo(null);
         frame.setResizable(false);
         frame.setVisible(true);
@@ -178,8 +178,6 @@ public class ContractExtensionQueue {
         addToQueue.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                // Your code here
-                // For example, you might want to add the selected player to the queue
                 int selectedRow = playerTable.getSelectedRow();
                 if (selectedRow != -1) {
                     String playerName = (String) playerTable.getValueAt(selectedRow, 0);

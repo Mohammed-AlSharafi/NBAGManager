@@ -6,8 +6,10 @@ import com.group.NBAGManager.repository.TeamRepository;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
+import java.awt.*;
 import java.awt.event.*;
 import java.time.LocalDateTime;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Stack;
 
@@ -35,7 +37,7 @@ public class InjuryReserveManagement {
 
         // retrieve all injured players and stack them
         List<Player> injured = teamRepository.findIsInjured(true);
-        injured.sort(((o1, o2) -> (o1.getInjuryDateTime().compareTo(o2.getInjuryDateTime()))));
+        injured.sort((Comparator.comparing(Player::getInjuryDateTime)));
         injuredPlayers = new Stack<>();
         injured.forEach(player -> injuredPlayers.push(player));
 
@@ -116,6 +118,10 @@ public class InjuryReserveManagement {
         JScrollPane scrollPane = new JScrollPane(addPlayerTable);
         playerListFrame.add(scrollPane);
 
+        JButton addToStack = new JButton("Add");
+        playerListFrame.add(addToStack, BorderLayout.SOUTH);
+        addToStack.setEnabled(false);
+
         addPlayerTable.addMouseListener(new MouseAdapter() {
             private Player findPlayerByName(String name) {
                 for (Player player: availablePlayers) {
@@ -128,30 +134,53 @@ public class InjuryReserveManagement {
 
             @Override
             public void mouseClicked(MouseEvent e) {
-                if (e.getClickCount() == 2) {
                     int selectedRow = addPlayerTable.getSelectedRow();
                     if (selectedRow != -1) {
-                        String playerName = (String) addPlayerTable.getValueAt(selectedRow, 0);
-                        Player player = findPlayerByName(playerName);
-                        if (player == null) throw new RuntimeException("player should not be null at this point");
-
-                        // mark player as injured and update database
-                        player.setInjured(true);
-                        player.setInjuryDateTime(LocalDateTime.now());
-                        teamRepository.update(player);
-
-                        // remove the player from displayed available players
-                        tableModel.removeRow(availablePlayers.indexOf(player));
-
-                        // update lists of available and injured players
-                        availablePlayers.remove(player);
-                        injuredPlayers.push(player);
-
-                        // update the injured players table
-                        loadStackState();
+                        addToStack.setEnabled(true);
+                    }else {
+                        addToStack.setEnabled(false);
                     }
-                    playerListFrame.dispose();
+            }
+        });
+
+        addToStack.addActionListener(new ActionListener() {
+            private Player findPlayerByName(String name) {
+                for (Player player: availablePlayers) {
+                    if (player.getFullName().equals(name)) {
+                        return player;
+                    }
                 }
+                return null;
+            }
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                int selectedRow = addPlayerTable.getSelectedRow();
+                if (selectedRow != -1) {
+                    String playerName = (String) addPlayerTable.getValueAt(selectedRow, 0);
+                    Player player = findPlayerByName(playerName);
+
+                    String injuryDescMessage = "Enter injury description:";
+                    JTextField injuryDescField = new JTextField();
+                    JOptionPane.showConfirmDialog(null, injuryDescField, injuryDescMessage, JOptionPane.OK_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE);
+                    String injuryDesc = injuryDescField.getText();
+                    if (player == null) throw new RuntimeException("player should not be null at this point");
+
+                    // mark player as injured and update database
+                    player.setInjured(true);
+                    player.setInjuryDescription(injuryDesc);
+                    player.setInjuryDateTime(LocalDateTime.now());
+                    teamRepository.update(player);
+
+                    // remove the player from displayed available players
+                    tableModel.removeRow(availablePlayers.indexOf(player));
+
+                    // update lists of available and injured players
+                    availablePlayers.remove(player);
+                    injuredPlayers.push(player);
+
+                    // update the injured players table
+                loadStackState();
+                }playerListFrame.dispose();
             }
         });
 
@@ -181,12 +210,13 @@ public class InjuryReserveManagement {
 
     private void loadStackState() {
         // load in reverse order so the last item pushed to stack is displayed on top
-        String[] columnNames = {"Player", "Status"};
-        Object[][] data = new Object[injuredPlayers.size()][2];
+        String[] columnNames = {"Player", "Status", "Injury Description"};
+        Object[][] data = new Object[injuredPlayers.size()][3];
 
         for (int i = 0; i < injuredPlayers.size(); i++) {
             data[i][0] = injuredPlayers.get(injuredPlayers.size()-1-i).getFullName();
             data[i][1] = "Injured";
+            data[i][2] = injuredPlayers.get(injuredPlayers.size()-1-i).getInjuryDescription();
         }
 
         DefaultTableModel tableModel = new DefaultTableModel(data, columnNames) {
