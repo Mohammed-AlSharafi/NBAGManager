@@ -71,6 +71,17 @@ public class PlayerPerformanceRanking {
         //create the return button to return to main page
         JButton returnButton = GuiCreator.createButton("Return", new Font("Roboto Mono", Font.BOLD, 15), Color.decode("#646669"), Color.decode("#323437"), false, 1, 4);
 
+        //added MouseListener so that the button glows when hovering over it
+        returnButton.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseEntered(MouseEvent evt) {
+                returnButton.setForeground(Color.white);
+            }
+            @Override
+            public void mouseExited(MouseEvent evt) {
+                returnButton.setForeground(Color.decode("#646669"));
+            }
+        });
         returnButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -89,6 +100,7 @@ public class PlayerPerformanceRanking {
         titleLabel.setFont(new Font("Roboto", Font.BOLD, 25));
         titleLabel.setForeground(Color.decode("#E2B714"));
 
+        //constraints for the title
         GridBagConstraints gbcTitle = new GridBagConstraints();
         gbcTitle.gridx = 0;
         gbcTitle.gridy = 0;
@@ -135,6 +147,8 @@ public class PlayerPerformanceRanking {
                 backgroundLabel.setIcon(finalBackgroundImage);
             }
         });
+
+
 
         //close connection to the database on window close
         frame.addWindowListener(new WindowAdapter() {
