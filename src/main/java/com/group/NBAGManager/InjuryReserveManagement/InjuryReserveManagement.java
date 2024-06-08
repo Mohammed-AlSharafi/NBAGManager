@@ -73,13 +73,6 @@ public class InjuryReserveManagement {
         frame.setLocationRelativeTo(null);
         frame.setResizable(false);
         frame.setVisible(true);
-
-        frame.addWindowListener(new WindowAdapter() {
-            @Override
-            public void windowClosing(WindowEvent e) {
-                super.windowClosing(e);
-            }
-        });
     }
 
     private void addPlayerFromRepository() {
