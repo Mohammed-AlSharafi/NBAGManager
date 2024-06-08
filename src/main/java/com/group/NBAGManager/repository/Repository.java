@@ -1,5 +1,7 @@
 package com.group.NBAGManager.repository;
 
+import com.group.NBAGManager.model.Player;
+
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.sql.Connection;
@@ -48,4 +50,5 @@ public abstract class Repository<E> implements RepositoryInterface<E> {
             throw new RuntimeException(e);
         }
     }
+
 }
