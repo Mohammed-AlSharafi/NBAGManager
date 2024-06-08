@@ -1,151 +1,257 @@
 package com.group.NBAGManager;
 
-import com.group.NBAGManager.model.Player;
-import com.group.NBAGManager.repository.PlayerRepository;
-
-import java.awt.Color;
-import java.awt.Font;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.io.*;
-import java.util.LinkedList;
-import java.util.Queue;
-import javax.swing.JButton;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JScrollPane;
+import java.util.*;
+import java.util.List;
+import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 
+import com.group.NBAGManager.model.CurrentSession;
+import com.group.NBAGManager.model.Player;
+import com.group.NBAGManager.model.RepositoryHandler;
+import com.group.NBAGManager.repository.TeamRepository;
+import com.group.NBAGManager.repository.UserRepository;
 
-import java.io.Serializable;
+public class ContractExtensionQueue {
 
+    private JPanel panelMain;
+    private JLabel contractLabel;
+    private JTable contractTable;
+    private JButton removeButton;
+    private JButton backButton;
+    private JButton addButton;
+    private JButton addToQueue;
 
-public class ContractExtensionQueue implements ActionListener {
-    JFrame frame = new JFrame();
-    JLabel label = new JLabel("Contract");
-    JButton myButton = new JButton("Add players");
-    JButton myButton2 = new JButton("Remove");
-    JButton myButton3 = new JButton("Back");
+    private PriorityQueue<Player> contractQueue;
 
-    Queue<Player> extensionQueue = new LinkedList<>();
-    DefaultTableModel tableModel;
+    //repository connections
+    TeamRepository teamRepository;
 
-    private static final String FILE_NAME = "extensionQueue.ser"; // File to save the queue state
+    public ContractExtensionQueue() {
+        //queue for contract
+        contractQueue = new PriorityQueue<>();
 
-    ContractExtensionQueue() {
-        myButton.setBounds(30, 300, 100, 50);
-        myButton.setFocusable(false);
-        myButton.setFont(new Font("Arial", Font.PLAIN, 12));
-        myButton.addActionListener(this);
+        //initializing repositories
+        teamRepository = RepositoryHandler.getInstance().getTeamRepository();
 
-        myButton2.setBounds(150, 300, 100, 50);
-        myButton2.setFocusable(false);
-        myButton2.setFont(new Font("Arial", Font.PLAIN, 12));
-        myButton2.addActionListener(this);
+        //initialise GUI
+        panelMain = new JPanel();
+        panelMain.setLayout(new BoxLayout(panelMain, BoxLayout.Y_AXIS));
 
-        myButton3.setBounds(270, 300, 100, 50);
-        myButton3.setFocusable(false);
-        myButton3.setFont(new Font("Arial", Font.PLAIN, 12));
-        myButton3.addActionListener(this);
+        contractLabel = new JLabel("Contract");
+        contractLabel.setFont(new Font("MV Boli", Font.PLAIN, 20));
+        contractLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
+        panelMain.add(contractLabel);
 
-        frame.setTitle("Contract Extension Queue");
-        frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-        frame.setResizable(false);
-        frame.setSize(420, 420);
-        frame.setLayout(null);
-        frame.setVisible(true);
-        frame.getContentPane().setBackground(new Color(0, 0, 50));
+        // this one to add spacing between text and table
+        panelMain.add(Box.createVerticalStrut(20));
 
-        label.setText("Contract");
-        label.setForeground(new Color(255, 255, 255));
-        label.setFont(new Font("MV Boli", Font.PLAIN, 20));
-        label.setBounds(150, 5, 200, 200);
+        // contractTable for players in contract queue
+        String[] columnNames = {"Player", "Status", "Player's Composite Score"};
+        DefaultTableModel tableModel = new DefaultTableModel(columnNames, 0) {
+            @Override
+            public boolean isCellEditable(int row, int column) {
+                return false;
+            }
+        };
 
-        frame.add(label);
-        frame.add(myButton);
-        frame.add(myButton2);
-        frame.add(myButton3);
+        contractTable = new JTable(tableModel);
 
-        TablePanel tablePanel = new TablePanel();
-        JScrollPane tableScrollPane = tablePanel.getTableScrollPane();
-        tableScrollPane.setBounds(30, 150, 360, 120);
-        frame.add(tableScrollPane);
-
-        tableModel = tablePanel.getTableModel();
-
-        // Load the queue state from the file
+        // load existing queue
         loadQueueState();
+
+        JScrollPane tableScrollPane = new JScrollPane(contractTable);
+        tableScrollPane.setAlignmentX(Component.CENTER_ALIGNMENT);
+        panelMain.add(tableScrollPane);
+
+        panelMain.add(Box.createVerticalStrut(20));
+
+        //panel for buttons
+        JPanel buttonPanel = new JPanel();
+        buttonPanel.setLayout(new BoxLayout(buttonPanel, BoxLayout.X_AXIS));
+        buttonPanel.setAlignmentX(Component.CENTER_ALIGNMENT);
+
+        // Add buttons to buttonPanel
+        buttonPanel.add(addButton);
+        buttonPanel.add(Box.createHorizontalStrut(10)); //spacing
+        buttonPanel.add(removeButton);
+        buttonPanel.add(Box.createHorizontalStrut(10));
+        buttonPanel.add(backButton);
+
+        // Add buttonPanel to panelMain
+        panelMain.add(buttonPanel);
+
+
+        addButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                addPlayerFromRepository();
+            }
+        });
     }
 
-    @Override
-    public void actionPerformed(ActionEvent e) {
-        if (e.getSource() == myButton) {
-            addPlayerToExtensionQueue("Player " + (extensionQueue.size() + 1));
-        } else if (e.getSource() == myButton2) {
-            removePlayerFromExtensionQueue();
-        } else if (e.getSource() == myButton3) {
-            frame.dispose();
+
+    public void displayForm() { //to display form file for GUI
+        JFrame frame = new JFrame("Contract");
+        frame.setContentPane(panelMain);
+        frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+        frame.setSize(1250, 700);
+        frame.setLocationRelativeTo(null);
+        frame.setResizable(false);
+        frame.setVisible(true);
+
+        //action listener
+        backButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                frame.dispose(); //close
+            }
+        });
+
+        removeButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                removePlayerFromQueue();
+            }
+        });
+
+        frame.addWindowListener(new java.awt.event.WindowAdapter() {
+            @Override
+            public void windowClosing(java.awt.event.WindowEvent e) {
+                super.windowClosing(e);
+            }
+        });
+    }
+
+
+    private void addPlayerFromRepository() { //window popup containing players in current team
+        JFrame playerListFrame = new JFrame("Select Player");
+        playerListFrame.setSize(500, 400);
+        playerListFrame.setLocationRelativeTo(null);
+
+        // Retrieve players who are not in the contract extension queue from TeamRepository
+        List<Player> availablePlayers = teamRepository.findIsContractExtensionQueued(false);
+
+        // Create table data for players
+        Object[][] rowData = new Object[availablePlayers.size()][3];
+        for (int i = 0; i < availablePlayers.size(); i++) {
+            rowData[i][0] = availablePlayers.get(i).getFullName();
+            rowData[i][1] = contractStatus(availablePlayers.get(i));
+            rowData[i][2] = availablePlayers.get(i).getCompositeScore();
         }
-    }
 
-    public void addPlayerToExtensionQueue(String playerName) {
-        PlayerRepository playerRepository = new PlayerRepository();
-        Player player = playerRepository.findById(1);
-        extensionQueue.add(player);
+        // Create table with player data
+        String[] columnNames = {"Player", "Status", "Player's Composite Score"};
+        DefaultTableModel tableModel = new DefaultTableModel(rowData, columnNames) {
+            @Override
+            public boolean isCellEditable(int row, int column) {
+                return false;
+            }
+        };
+        JTable playerTable = new JTable(tableModel);
 
-        // Add the new player to the table
-        tableModel.addRow(new Object[]{playerName, "Pending"});
+        JScrollPane scrollPane = new JScrollPane(playerTable);
+        playerListFrame.add(scrollPane);
 
-        System.out.println("-- Adding Player to Contract Extension Queue --");
-        System.out.println("Player: " + playerName);
-        System.out.println("Status: Added to Contract Extension Queue\n");
+        addToQueue = new JButton("Add");
+        playerListFrame.add(addToQueue, BorderLayout.SOUTH);
+        addToQueue.setEnabled(false);
 
-        saveQueueState();
-    }
-
-    public void removePlayerFromExtensionQueue() {
-        if (!extensionQueue.isEmpty()) {
-            Player player = extensionQueue.poll();
-            System.out.println("-- Removing Player from Contract Extension Queue --");
-            System.out.println("Player: " + player.getFirstName());
-            System.out.println("Status: Contract Renewed\n");
-
-            // Remove the player from the table
-            int rowCount = tableModel.getRowCount();
-            for (int i = 0; i < rowCount; i++) {
-                if (tableModel.getValueAt(i, 0).equals(player.getFirstName())) {
-                    tableModel.removeRow(i);
-                    break;
+        // action listener to handle player selection
+        playerTable.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                addToQueue.setEnabled(true);
+                int selectedRow = playerTable.getSelectedRow();
+                if (selectedRow != -1) {
+                    addToQueue.setEnabled(true);
+                }else{
+                    addToQueue.setEnabled(false);
                 }
             }
-
-            saveQueueState();
-        } else {
-            System.out.println("No players in the Contract Extension Queue.\n");
-        }
-    }
-
-    private void saveQueueState() {
-        try (ObjectOutputStream out = new ObjectOutputStream(new FileOutputStream(FILE_NAME))) {
-            out.writeObject(new LinkedList<>(extensionQueue)); // Use LinkedList to ensure serialization
-            System.out.println("Queue state saved.");
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
-    @SuppressWarnings("unchecked")
-    private void loadQueueState() {
-        try (ObjectInputStream in = new ObjectInputStream(new FileInputStream(FILE_NAME))) {
-            extensionQueue = (Queue<Player>) in.readObject();
-            System.out.println("Queue state loaded.");
-
-            // Repopulate the table with the loaded queue
-            for (Player player : extensionQueue) {
-                tableModel.addRow(new Object[]{player.getFirstName(), "Pending"});
+        });
+        addToQueue.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                // Your code here
+                // For example, you might want to add the selected player to the queue
+                int selectedRow = playerTable.getSelectedRow();
+                if (selectedRow != -1) {
+                    String playerName = (String) playerTable.getValueAt(selectedRow, 0);
+                    Player player = findPlayerByName(playerName);
+                    if (player != null) {
+                        //add player
+                        addPlayerToQueue(player);
+                    } else {
+                        JOptionPane.showMessageDialog(panelMain, "Player not found in the team.", "Player not found", JOptionPane.WARNING_MESSAGE);
+                    }
+                    playerListFrame.dispose();
+                }
             }
-        } catch (IOException | ClassNotFoundException e) {
-            e.printStackTrace();
+        });
+
+        playerListFrame.setVisible(true);
+    }
+
+    //removing player from queue and updating values
+    private void removePlayerFromQueue() {
+//        DefaultTableModel contractTableModel = (DefaultTableModel) contractTable.getModel();
+        if (!contractQueue.isEmpty()) {
+            // Remove player from the contractQueue
+            Player removedPlayer = contractQueue.poll();
+            removedPlayer.setContractRenewQueued(false);
+            teamRepository.update(removedPlayer);
+            // Update the table
+            updateTable();
+        } else {
+            //if queue empty
+            JOptionPane.showMessageDialog(panelMain, "No players in the contract queue.", "Queue Empty", JOptionPane.WARNING_MESSAGE);
         }
+    }
+    //adding player to queue and updating table
+    private void addPlayerToQueue(Player addedPlayer){
+        addedPlayer.setContractRenewQueued(true);
+        teamRepository.update(addedPlayer);
+        contractQueue.offer(addedPlayer);
+        updateTable();
+    }
+
+    private void updateTable(){
+        DefaultTableModel contractTableModel = (DefaultTableModel) contractTable.getModel();
+        contractTableModel.setRowCount(0);
+        for(Player player : contractQueue){
+            contractTableModel.addRow(new Object[]{player.getFullName(), contractStatus(player), player.getCompositeScore()});
+        }
+    }
+
+    //load queue from database
+    private void loadQueueState() {
+        List<Player> players = teamRepository.findIsContractExtensionQueued(true);
+        for(Player player : players) {
+            contractQueue.offer(player);
+        }
+        // Update the table
+        updateTable();
+    }
+
+    //find player from database by name
+    private Player findPlayerByName(String name) {
+        List<Player> players = teamRepository.findAll();
+        for (Player player : players) {
+            if (player.getFullName().equals(name)) {
+                return player;
+            }
+        }
+        return null;
+    }
+
+    //return contract status
+    private String contractStatus(Player player){
+        return player.isContractRenewQueued()? "Pending to renew contract" : "Active";
     }
 }

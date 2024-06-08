@@ -1,5 +1,6 @@
 package com.group.NBAGManager;
 
+import com.group.NBAGManager.InjuryReserveManagement.InjuryReserveManagement;
 import com.group.NBAGManager.model.Player;
 import com.group.NBAGManager.model.RepositoryHandler;
 import com.group.NBAGManager.repository.TeamRepository;
@@ -49,13 +50,15 @@ public class App {
         });
         injuriesButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                new InjuryReserveManagement();
+                InjuryReserveManagement injury = new InjuryReserveManagement();
+                injury.displayForm();
             }
         });
         contractButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                new ContractExtensionQueue();
+                ContractExtensionQueue contract = new ContractExtensionQueue();
+                contract.displayForm();
             }
         });
         rankingButton.addActionListener(new ActionListener() {
