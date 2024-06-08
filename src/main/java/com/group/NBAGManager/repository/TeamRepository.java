@@ -121,12 +121,54 @@ public class TeamRepository extends Repository<Player> implements TeamRepository
             PreparedStatement pStatement = con.prepareStatement(query);
             pStatement.setDouble(1, obj.getSalary());
             pStatement.setBoolean(2, obj.isInjured());
-            pStatement.setTimestamp(3, java.sql.Timestamp.valueOf(obj.getInjuryDateTime()));
+            pStatement.setTimestamp(3, obj.getInjuryDateTime() == null?null:java.sql.Timestamp.valueOf(obj.getInjuryDateTime()));
             pStatement.setString(4, obj.getInjuryDescription());
             pStatement.setBoolean(5, obj.isContractRenewQueued());
             pStatement.setInt(6, obj.getPlayerId());
             pStatement.setInt(7, currentUser.getUserId());
             pStatement.executeUpdate();
+        }catch (SQLException e){
+            System.out.println(e);
+            throw new RuntimeException();
+        }
+    }
+
+    public List<Player> findIsContractExtensionQueued(boolean isContractRenewQueued) {
+        User currentUser = CurrentSession.getInstance().getLoggedInUser();
+        List<Player> players = new ArrayList<>();
+        try{
+            String query = "SELECT players.*, teams.salary, teams.isInjured, teams.injuryDateTime," +
+                    " teams.injuryDescription, teams.isContractRenewQueued FROM players INNER JOIN teams" +
+                    " ON players.playerId = teams.playerId INNER JOIN users ON teams.userId = users.userId" +
+                    " WHERE users.userId = ? AND teams.isContractRenewQueued = ?";
+            PreparedStatement pStatement = con.prepareStatement(query);
+            pStatement.setInt(1,currentUser.getUserId());
+            pStatement.setBoolean(2, isContractRenewQueued);
+            ResultSet rs = pStatement.executeQuery();
+            while (rs.next()){
+                Player player = new Player(
+                        rs.getInt("playerId"),
+                        rs.getString("firstName"),
+                        rs.getString("lastName"),
+                        rs.getInt("age"),
+                        rs.getDouble("height"),
+                        rs.getDouble("weight"),
+                        rs.getString("position"),
+                        rs.getDouble("salary"),
+                        rs.getDouble("points"),
+                        rs.getDouble("rebounds"),
+                        rs.getDouble("assists"),
+                        rs.getDouble("steals"),
+                        rs.getDouble("blocks"),
+                        rs.getDouble("compositeScore"),
+                        rs.getBoolean("isInjured"),
+                        rs.getTimestamp("injuryDateTime") == null? null : rs.getTimestamp("injuryDateTime").toLocalDateTime(),
+                        rs.getString("injuryDescription"),
+                        rs.getBoolean("isContractRenewQueued")
+                );
+                players.add(player);
+            }
+            return players;
         }catch (SQLException e){
             System.out.println(e);
             throw new RuntimeException();
