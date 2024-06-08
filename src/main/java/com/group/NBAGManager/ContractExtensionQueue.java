@@ -128,7 +128,6 @@ public class ContractExtensionQueue {
         });
     }
 
-
     private void addPlayerFromRepository() { //window popup containing players in current team
         JFrame playerListFrame = new JFrame("Select Player");
         playerListFrame.setSize(500, 400);

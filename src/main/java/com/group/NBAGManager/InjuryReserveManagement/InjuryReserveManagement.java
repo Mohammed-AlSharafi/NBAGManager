@@ -179,8 +179,9 @@ public class InjuryReserveManagement {
                     injuredPlayers.push(player);
 
                     // update the injured players table
-                loadStackState();
-                }playerListFrame.dispose();
+                    loadStackState();
+                }
+                playerListFrame.dispose();
             }
         });
 
@@ -201,6 +202,7 @@ public class InjuryReserveManagement {
             // update database
             player.setInjured(false);
             player.setInjuryDateTime(null);
+            player.setInjuryDescription("");
             teamRepository.update(player);
         }
         else {
