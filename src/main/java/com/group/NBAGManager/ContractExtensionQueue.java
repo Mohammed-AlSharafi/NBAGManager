@@ -1,10 +1,7 @@
 package com.group.NBAGManager;
 
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
+import java.awt.event.*;
 import java.io.*;
 import java.util.*;
 import java.util.List;
@@ -25,7 +22,9 @@ public class ContractExtensionQueue {
     private JButton removeButton;
     private JButton backButton;
     private JButton addButton;
+    private JLabel heading;
     private JButton addToQueue;
+    private JFrame frame;
 
     private PriorityQueue<Player> contractQueue;
 
@@ -39,18 +38,6 @@ public class ContractExtensionQueue {
         //initializing repositories
         teamRepository = RepositoryHandler.getInstance().getTeamRepository();
 
-        //initialise GUI
-        panelMain = new JPanel();
-        panelMain.setLayout(new BoxLayout(panelMain, BoxLayout.Y_AXIS));
-
-        contractLabel = new JLabel("Contract");
-        contractLabel.setFont(new Font("MV Boli", Font.PLAIN, 20));
-        contractLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
-        panelMain.add(contractLabel);
-
-        // this one to add spacing between text and table
-        panelMain.add(Box.createVerticalStrut(20));
-
         // contractTable for players in contract queue
         String[] columnNames = {"Player", "Status", "Player's Composite Score"};
         DefaultTableModel tableModel = new DefaultTableModel(columnNames, 0) {
@@ -60,32 +47,10 @@ public class ContractExtensionQueue {
             }
         };
 
-        contractTable = new JTable(tableModel);
+        contractTable.setModel(tableModel);
 
         // load existing queue
         loadQueueState();
-
-        JScrollPane tableScrollPane = new JScrollPane(contractTable);
-        tableScrollPane.setAlignmentX(Component.CENTER_ALIGNMENT);
-        panelMain.add(tableScrollPane);
-
-        panelMain.add(Box.createVerticalStrut(20));
-
-        //panel for buttons
-        JPanel buttonPanel = new JPanel();
-        buttonPanel.setLayout(new BoxLayout(buttonPanel, BoxLayout.X_AXIS));
-        buttonPanel.setAlignmentX(Component.CENTER_ALIGNMENT);
-
-        // Add buttons to buttonPanel
-        buttonPanel.add(addButton);
-        buttonPanel.add(Box.createHorizontalStrut(10)); //spacing
-        buttonPanel.add(removeButton);
-        buttonPanel.add(Box.createHorizontalStrut(10));
-        buttonPanel.add(backButton);
-
-        // Add buttonPanel to panelMain
-        panelMain.add(buttonPanel);
-
 
         addButton.addActionListener(new ActionListener() {
             @Override
@@ -97,13 +62,19 @@ public class ContractExtensionQueue {
 
 
     public void displayForm() { //to display form file for GUI
-        JFrame frame = new JFrame("Contract");
+        frame = new JFrame("Contract Extension Queue");
         frame.setContentPane(panelMain);
         frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         frame.setSize(1000, 500);
         frame.setLocationRelativeTo(null);
         frame.setResizable(false);
         frame.setVisible(true);
+        frame.addWindowListener(new WindowAdapter() {
+            @Override
+            public void windowClosing(WindowEvent e) {
+                super.windowClosing(e);
+            }
+        });
 
         //action listener
         backButton.addActionListener(new ActionListener() {
