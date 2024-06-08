@@ -66,27 +66,6 @@ public class AddPlayer {
 
     private void setPlayersTable(){
         //load the table
-        loadTable();
-    // Adjust column widths
-        playersTable.getColumnModel().getColumn(0).setPreferredWidth(170); // Name
-        playersTable.getColumnModel().getColumn(1).setPreferredWidth(60);  // Age
-        playersTable.getColumnModel().getColumn(2).setPreferredWidth(60);  // Height
-        playersTable.getColumnModel().getColumn(3).setPreferredWidth(60);  // Weight
-        playersTable.getColumnModel().getColumn(4).setPreferredWidth(100); // Position
-        playersTable.getColumnModel().getColumn(5).setPreferredWidth(70); // Points
-        playersTable.getColumnModel().getColumn(6).setPreferredWidth(70); // Rebounds
-        playersTable.getColumnModel().getColumn(7).setPreferredWidth(70); // Assists
-        playersTable.getColumnModel().getColumn(8).setPreferredWidth(70); // Steals
-        playersTable.getColumnModel().getColumn(9).setPreferredWidth(70); // Blocks
-
-    // Set custom renderer for all columns
-        for (int i = 0; i < playersTable.getColumnCount(); i++) {
-        playersTable.getColumnModel().getColumn(i).setCellRenderer(new CustomCellRenderer());
-    }
-        scroll.setViewportView(playersTable);
-}
-
-    private void loadTable(){
         ArrayList<Player> unOwnedPlayers = new ArrayList<>(marketPlayers);
         unOwnedPlayers.removeAll(teamPlayers);
 
@@ -128,7 +107,25 @@ public class AddPlayer {
             }
         };
         playersTable.setModel(model);
+
+        // Adjust column widths
+        playersTable.getColumnModel().getColumn(0).setPreferredWidth(170); // Name
+        playersTable.getColumnModel().getColumn(1).setPreferredWidth(60);  // Age
+        playersTable.getColumnModel().getColumn(2).setPreferredWidth(60);  // Height
+        playersTable.getColumnModel().getColumn(3).setPreferredWidth(60);  // Weight
+        playersTable.getColumnModel().getColumn(4).setPreferredWidth(100); // Position
+        playersTable.getColumnModel().getColumn(5).setPreferredWidth(70); // Points
+        playersTable.getColumnModel().getColumn(6).setPreferredWidth(70); // Rebounds
+        playersTable.getColumnModel().getColumn(7).setPreferredWidth(70); // Assists
+        playersTable.getColumnModel().getColumn(8).setPreferredWidth(70); // Steals
+        playersTable.getColumnModel().getColumn(9).setPreferredWidth(70); // Blocks
+
+        // Set custom renderer for all columns
+        for (int i = 0; i < playersTable.getColumnCount(); i++) {
+        playersTable.getColumnModel().getColumn(i).setCellRenderer(new CustomCellRenderer());
     }
+        scroll.setViewportView(playersTable);
+}
 
 static class CustomCellRenderer extends DefaultTableCellRenderer {
     @Override
@@ -157,7 +154,7 @@ static class CustomCellRenderer extends DefaultTableCellRenderer {
                     if(!(row<0)){
                         Player player = getPlayerFromRow(row);
                         handleRowClick(player);
-                        loadTable();
+                        setPlayersTable();
                     }
                 }
             }
