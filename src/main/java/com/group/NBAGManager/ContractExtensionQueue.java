@@ -25,6 +25,7 @@ public class ContractExtensionQueue {
     private JButton removeButton;
     private JButton backButton;
     private JButton addButton;
+    private JButton addToQueue;
 
     private PriorityQueue<Player> contractQueue;
 
@@ -157,22 +158,37 @@ public class ContractExtensionQueue {
         JScrollPane scrollPane = new JScrollPane(playerTable);
         playerListFrame.add(scrollPane);
 
+        addToQueue = new JButton("Add");
+        playerListFrame.add(addToQueue, BorderLayout.SOUTH);
+        addToQueue.setEnabled(false);
+
         // action listener to handle player selection
         playerTable.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
-                if(e.getClickCount() == 2) {
-                    int selectedRow = playerTable.getSelectedRow();
-                    if (selectedRow != -1) {
-                        String playerName = (String) playerTable.getValueAt(selectedRow, 0);
-                        Player player = findPlayerByName(playerName);
-
-                        if (player != null) {
-                            //add player
-                            addPlayerToQueue(player);
-                        } else {
-                            JOptionPane.showMessageDialog(panelMain, "Player not found in the team.", "Player not found", JOptionPane.WARNING_MESSAGE);
-                        }
+                addToQueue.setEnabled(true);
+                int selectedRow = playerTable.getSelectedRow();
+                if (selectedRow != -1) {
+                    addToQueue.setEnabled(true);
+                }else{
+                    addToQueue.setEnabled(false);
+                }
+            }
+        });
+        addToQueue.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                // Your code here
+                // For example, you might want to add the selected player to the queue
+                int selectedRow = playerTable.getSelectedRow();
+                if (selectedRow != -1) {
+                    String playerName = (String) playerTable.getValueAt(selectedRow, 0);
+                    Player player = findPlayerByName(playerName);
+                    if (player != null) {
+                        //add player
+                        addPlayerToQueue(player);
+                    } else {
+                        JOptionPane.showMessageDialog(panelMain, "Player not found in the team.", "Player not found", JOptionPane.WARNING_MESSAGE);
                     }
                     playerListFrame.dispose();
                 }
