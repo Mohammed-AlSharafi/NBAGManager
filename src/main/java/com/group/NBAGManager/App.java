@@ -13,6 +13,8 @@ import javax.swing.table.TableRowSorter;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.util.List;
 
 public class App {
@@ -39,6 +41,14 @@ public class App {
             public void actionPerformed(ActionEvent actionEvent) {
                 AddPlayer addPlayer = new AddPlayer();
                 addPlayer.displayForm();
+
+                // Add a window listener to update the table when the add player window is closed
+                addPlayer.getFrame().addWindowListener(new WindowAdapter() {
+                    @Override
+                    public void windowClosed(WindowEvent e) {
+                        displayPlayers(teamRepository.findAll());
+                    }
+                });
             }
         });
 
@@ -46,6 +56,14 @@ public class App {
             public void actionPerformed(ActionEvent e) {
                 RemovePlayer removePlayer = new RemovePlayer();
                 removePlayer.displayForm();
+
+                // Add a window listener to update the table when the remove player window is closed
+                removePlayer.getFrame().addWindowListener(new WindowAdapter() {
+                    @Override
+                    public void windowClosed(WindowEvent e) {
+                        displayPlayers(teamRepository.findAll());
+                    }
+                });
             }
         });
         injuriesButton.addActionListener(new ActionListener() {

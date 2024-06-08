@@ -149,18 +149,6 @@ public class PlayerPerformanceRanking {
         });
 
 
-
-        //close connection to the database on window close
-        frame.addWindowListener(new WindowAdapter() {
-            @Override
-            public void windowClosing(WindowEvent e) {
-                super.windowClosing(e);
-                if(teamRepository != null) {
-                    teamRepository.close();
-                }
-            }
-        });
-
         //display the window in the middle of the screen
         frame.setLocationRelativeTo(null);
         //display the window
