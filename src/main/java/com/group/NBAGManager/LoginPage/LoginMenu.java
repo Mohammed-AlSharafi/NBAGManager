@@ -123,7 +123,8 @@ public class LoginMenu extends JFrame {
         JButton registerButton = GuiCreator.createButton("Register", new Font("Roboto Mono", Font.BOLD, 15), Color.decode("#646669"), Color.decode("#323437"), false, 0, 4);
         gridbag.gridx = 0;
         gridbag.gridy = 4;
-        //add(registerButton,gridbag);
+
+        //add MouseListener so that the button glows when hovering over it
         registerButton.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseEntered(MouseEvent evt) {
@@ -136,6 +137,7 @@ public class LoginMenu extends JFrame {
         });
         backgroundLabel.add(registerButton, gridbag);
 
+        // register method is called when register button is clicked
         registerButton.addActionListener((ActionEvent e) ->{
             register();
         });
