@@ -49,10 +49,23 @@ public class ContractExtensionQueue {
         // load existing queue
         loadQueueState();
 
+        //action listener
         addButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 addPlayerFromRepository();
+            }
+        });
+        backButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                frame.dispose(); //close
+            }
+        });
+        removeButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                removePlayerFromQueue();
             }
         });
     }
@@ -66,21 +79,6 @@ public class ContractExtensionQueue {
         frame.setLocationRelativeTo(null);
         frame.setResizable(false);
         frame.setVisible(true);
-
-        //action listener
-        backButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                frame.dispose(); //close
-            }
-        });
-
-        removeButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                removePlayerFromQueue();
-            }
-        });
     }
 
     private void addPlayerFromRepository() { //window popup containing players in current team
