@@ -18,8 +18,10 @@ import java.util.List;
 import java.util.Map;
 
 public class RemovePlayer {
+    private JFrame frame;
     private JPanel panelMain;
-    private JScrollPane scrollPane;
+    private JButton backButton;
+    private JScrollPane scrollPanel;
     private JTable playersTable;
     private JTextField searchField;
     TeamRepository repo;
@@ -48,6 +50,16 @@ public class RemovePlayer {
                 }
             }
         });
+        backButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                frame.dispose();
+            }
+        });
+    }
+
+    public JFrame getFrame() {
+        return frame;
     }
 
     private void scrollToPlayerByName(String playerName) {
@@ -147,10 +159,10 @@ public class RemovePlayer {
     }
 
     public void displayForm(){
-        JFrame frame = new JFrame("RemovePlayer");
+        frame = new JFrame("RemovePlayer");
         frame.setContentPane(panelMain);
         frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-        frame.setSize(1250,600);
+        frame.setSize(1000,500);
         frame.setLocationRelativeTo(null);
         frame.setResizable(false);
         frame.setVisible(true);

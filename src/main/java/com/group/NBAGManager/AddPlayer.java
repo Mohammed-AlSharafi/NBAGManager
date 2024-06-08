@@ -15,6 +15,7 @@ import java.util.*;
 import java.util.List;
 
 public class AddPlayer {
+    private JFrame frame;
     private JPanel panelMain;
     private JButton SearchId;
     private JButton SearchName;
@@ -22,14 +23,17 @@ public class AddPlayer {
     private JTable playersTable;
     private JScrollPane scroll;
     private JTextField searchField;
-    List<Player> team;
+    private JButton backButton;
     public TeamRepository teamRepository;
     private Map<String, Player> playerMap = new HashMap<>();
+    List<Player> teamPlayers;
+    List<Player> marketPlayers;
 
     public AddPlayer() {
         teamRepository = RepositoryHandler.getInstance().getTeamRepository();
         playerRepository = RepositoryHandler.getInstance().getPlayerRepository();
-        team = teamRepository.findAll();
+        teamPlayers = teamRepository.findAll();
+        marketPlayers = playerRepository.findAll();
         playersTable.addComponentListener(new ComponentAdapter() {
             @Override
             public void componentResized(ComponentEvent e) {
@@ -48,19 +52,46 @@ public class AddPlayer {
                 }
             }
         });
+        backButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                frame.dispose();
+            }
+        });
+    }
+
+    public JFrame getFrame() {
+        return frame;
     }
 
     private void setPlayersTable(){
-        List<Player> teamPlayers = teamRepository.findAll();
-        List<Player> marketPlayers = playerRepository.findAll();
+        //load the table
+        loadTable();
+    // Adjust column widths
+        playersTable.getColumnModel().getColumn(0).setPreferredWidth(170); // Name
+        playersTable.getColumnModel().getColumn(1).setPreferredWidth(60);  // Age
+        playersTable.getColumnModel().getColumn(2).setPreferredWidth(60);  // Height
+        playersTable.getColumnModel().getColumn(3).setPreferredWidth(60);  // Weight
+        playersTable.getColumnModel().getColumn(4).setPreferredWidth(100); // Position
+        playersTable.getColumnModel().getColumn(5).setPreferredWidth(70); // Points
+        playersTable.getColumnModel().getColumn(6).setPreferredWidth(70); // Rebounds
+        playersTable.getColumnModel().getColumn(7).setPreferredWidth(70); // Assists
+        playersTable.getColumnModel().getColumn(8).setPreferredWidth(70); // Steals
+        playersTable.getColumnModel().getColumn(9).setPreferredWidth(70); // Blocks
+
+    // Set custom renderer for all columns
+        for (int i = 0; i < playersTable.getColumnCount(); i++) {
+        playersTable.getColumnModel().getColumn(i).setCellRenderer(new CustomCellRenderer());
+    }
+        scroll.setViewportView(playersTable);
+}
+
+    private void loadTable(){
         ArrayList<Player> unOwnedPlayers = new ArrayList<>(marketPlayers);
         unOwnedPlayers.removeAll(teamPlayers);
-        unOwnedPlayers.forEach(player->{
-            System.out.println(player.getPlayerId());
-        });
 
         String[] columnNames = {
-                "Name", "Age", "Height", "Weight", "Position", "Salary",
+                "Name", "Age", "Height", "Weight", "Position",
                 "Points", "Rebounds", "Assists", "Steals", "Blocks"
         };
         Object[][] data = new Object[unOwnedPlayers.size()][columnNames.length];
@@ -73,12 +104,11 @@ public class AddPlayer {
             data[i][2] = player.getHeight();
             data[i][3] = player.getWeight();
             data[i][4] = player.getPosition();
-            data[i][5] = player.getSalary();
-            data[i][6] = player.getPoints();
-            data[i][7] = player.getRebounds();
-            data[i][8] = player.getAssists();
-            data[i][9] = player.getSteals();
-            data[i][10] = player.getBlocks();
+            data[i][5] = player.getPoints();
+            data[i][6] = player.getRebounds();
+            data[i][7] = player.getAssists();
+            data[i][8] = player.getSteals();
+            data[i][9] = player.getBlocks();
             playerMap.put(playerName,player);
         }
 
@@ -88,7 +118,7 @@ public class AddPlayer {
                 return switch (column) {
                     case 0, 4 -> String.class;
                     case 1 -> Integer.class;
-                    case 2, 3, 5, 6, 7, 8, 9, 10 -> Double.class;
+                    case 2, 3, 5, 6, 7, 8, 9 -> Double.class;
                     default -> Object.class;
                 };
             }
@@ -98,26 +128,7 @@ public class AddPlayer {
             }
         };
         playersTable.setModel(model);
-
-    // Adjust column widths
-        playersTable.getColumnModel().getColumn(0).setPreferredWidth(170); // Name
-        playersTable.getColumnModel().getColumn(1).setPreferredWidth(60);  // Age
-        playersTable.getColumnModel().getColumn(2).setPreferredWidth(60);  // Height
-        playersTable.getColumnModel().getColumn(3).setPreferredWidth(60);  // Weight
-        playersTable.getColumnModel().getColumn(4).setPreferredWidth(100); // Position
-        playersTable.getColumnModel().getColumn(5).setPreferredWidth(70); // Salary
-        playersTable.getColumnModel().getColumn(6).setPreferredWidth(70); // Points
-        playersTable.getColumnModel().getColumn(7).setPreferredWidth(70); // Rebounds
-        playersTable.getColumnModel().getColumn(8).setPreferredWidth(70); // Assists
-        playersTable.getColumnModel().getColumn(9).setPreferredWidth(70); // Steals
-        playersTable.getColumnModel().getColumn(10).setPreferredWidth(70); // Blocks
-
-    // Set custom renderer for all columns
-        for (int i = 0; i < playersTable.getColumnCount(); i++) {
-        playersTable.getColumnModel().getColumn(i).setCellRenderer(new CustomCellRenderer());
     }
-        scroll.setViewportView(playersTable);
-}
 
 static class CustomCellRenderer extends DefaultTableCellRenderer {
     @Override
@@ -146,6 +157,7 @@ static class CustomCellRenderer extends DefaultTableCellRenderer {
                     if(!(row<0)){
                         Player player = getPlayerFromRow(row);
                         handleRowClick(player);
+                        loadTable();
                     }
                 }
             }
@@ -169,10 +181,13 @@ static class CustomCellRenderer extends DefaultTableCellRenderer {
         if(response==0){
             if(!checkSize()) JOptionPane.showMessageDialog(null, "Team size will exceed cap. \nPlayer addition cancelled.");
             else{
-                JFormattedTextField salaryfield = setTextField();
-                int input = JOptionPane.showConfirmDialog(null, salaryfield, "Please enter player's salary. ", JOptionPane.OK_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE);
+                JFormattedTextField salaryField = setTextField();
+                JPanel panel = new JPanel(new GridLayout(0, 1));
+                panel.add(new JLabel("Please enter player's salary: "));
+                panel.add(salaryField);
+                int input = JOptionPane.showConfirmDialog(null, panel, "Player Salary", JOptionPane.OK_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE);
                 if(input == JOptionPane.OK_OPTION){
-                    double salary = ((Number)salaryfield.getValue()).doubleValue();
+                    double salary = ((Number)salaryField.getValue()).doubleValue();
                     String salary_check = "Salary is under minimum. Players with more than 20.0 points per game have minimum salary of 3000.";
                     salary_check+="Players with less points have minimum salary of 1000.";
                     salary_check+="Your current player has "+player.getPoints()+" points.";
@@ -182,8 +197,12 @@ static class CustomCellRenderer extends DefaultTableCellRenderer {
                         else{
                             player.setSalary(salary);
                             teamRepository.save(player);
+
+                            teamPlayers.add(player); //to update current cached team players
+                            marketPlayers.remove(player); //to update current cached market players
+
                             JOptionPane.showMessageDialog(null,"Player has been added to team.");
-                            team = teamRepository.findAll();
+                            teamPlayers = teamRepository.findAll();
                         }
                     }
                 }
@@ -230,7 +249,7 @@ static class CustomCellRenderer extends DefaultTableCellRenderer {
     private boolean checkTeamSalary(double Salary){
         System.out.println(Salary);
         double totalsalary = 0;
-        for(Player player : team){
+        for(Player player : teamPlayers){
             totalsalary += player.getSalary();
         }
         totalsalary+=Salary;
@@ -247,14 +266,14 @@ static class CustomCellRenderer extends DefaultTableCellRenderer {
     }
 
     private boolean checkSize(){
-        return team.size()<15;
+        return teamPlayers.size()<15;
     }
 
     public void displayForm(){
-        JFrame frame = new JFrame("AddPlayer");
+        frame = new JFrame("AddPlayer");
         frame.setContentPane(panelMain);
         frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-        frame.setSize(1250,600);
+        frame.setSize(1000,500);
         frame.setLocationRelativeTo(null);
         frame.setResizable(false);
         frame.setVisible(true);

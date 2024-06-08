@@ -1,41 +1,45 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <form xmlns="http://www.intellij.com/uidesigner/form/" version="1" bind-to-class="com.group.NBAGManager.RemovePlayer">
-  <grid id="27dc6" binding="panelMain" layout-manager="BorderLayout" hgap="0" vgap="0">
+  <grid id="27dc6" binding="panelMain" layout-manager="GridLayoutManager" row-count="2" column-count="2" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
+    <margin top="0" left="0" bottom="0" right="0"/>
     <constraints>
-      <xy x="20" y="20" width="500" height="493"/>
+      <xy x="20" y="20" width="500" height="290"/>
     </constraints>
     <properties/>
     <border type="none"/>
     <children>
-      <scrollpane id="a87f7" binding="scrollPane">
-        <constraints border-constraint="Center"/>
-        <properties>
-          <maximumSize width="3200" height="3200"/>
-          <minimumSize width="450" height="450"/>
-          <preferredSize width="450" height="450"/>
-          <requestFocusEnabled value="true"/>
-        </properties>
+      <scrollpane id="2a4a8" binding="scrollPanel">
+        <constraints>
+          <grid row="0" column="0" row-span="1" col-span="2" vsize-policy="7" hsize-policy="7" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+        </constraints>
+        <properties/>
         <border type="none"/>
         <children>
-          <component id="dc984" class="javax.swing.JTable" binding="playersTable">
+          <component id="ca2c1" class="javax.swing.JTable" binding="playersTable">
             <constraints/>
-            <properties>
-              <autoCreateColumnsFromModel value="true"/>
-              <autoCreateRowSorter value="true"/>
-              <autoResizeMode value="2"/>
-              <enabled value="true"/>
-              <fillsViewportHeight value="false"/>
-              <requestFocusEnabled value="true"/>
-            </properties>
+            <properties/>
           </component>
         </children>
       </scrollpane>
-      <component id="a655a" class="javax.swing.JTextField" binding="searchField">
-        <constraints border-constraint="South"/>
+      <component id="b4c2e" class="javax.swing.JButton" binding="backButton">
+        <constraints>
+          <grid row="1" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false">
+            <minimum-size width="150" height="30"/>
+            <preferred-size width="150" height="30"/>
+            <maximum-size width="150" height="30"/>
+          </grid>
+        </constraints>
         <properties>
-          <text value=""/>
-          <toolTipText value="Search for a particular player"/>
+          <text value="Back"/>
         </properties>
+      </component>
+      <component id="46b6e" class="javax.swing.JTextField" binding="searchField">
+        <constraints>
+          <grid row="1" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false">
+            <preferred-size width="150" height="-1"/>
+          </grid>
+        </constraints>
+        <properties/>
       </component>
     </children>
   </grid>
