@@ -106,38 +106,12 @@ public class Journey {
                 }
             }
         });
-
-
-        //        //creating a graph
-//        try {
-//            //adding vertices from VertexRepository
-//            VertexRepository vertexRepository = new VertexRepository();
-//            vertexRepository.findAll().forEach(vertex->{
-//                journeyGraph.addVertex(vertex.getVertexInfo(), vertex.getExtraInfo());
-//            });
-//
-//            vertexRepository.close();
-//
-//            //adding edges from EdgeRepository
-//            EdgeRepository edgeRepository = new EdgeRepository(journeyGraph);
-//            edgeRepository.addAllEdgesToGraph(journeyGraph);
-//            edgeRepository.close();
-//
-//            System.out.println(journeyGraph.getAllVertexObjects());
-//        }catch (RuntimeException e) {
-//            JOptionPane.showMessageDialog(null, "Error while communicating with the database.", "Error", JOptionPane.ERROR_MESSAGE);
-//        }
-
     }
+
     public void setNextLocationField(){
         int nextLocationIndex = shortestPath.indexOf(currentLocation.getSelectedItem()) + 1;
         nextLocation.setText(shortestPath.get(nextLocationIndex));
         nextLocation.revalidate();
         nextLocation.repaint();
-    }
-
-    private void createUIComponents() {
-        JButton nextButton = GuiCreator.createButton("Login", new Font("Roboto Mono", Font.BOLD, 15), Color.decode("#646669"), Color.decode("#323437"), false, 1, 4);
-        getNextLocationBtn = nextButton;
     }
 }
