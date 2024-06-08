@@ -259,13 +259,13 @@ public class Player implements Comparable<Player> {
 
     @Override
     public int compareTo(Player o) {
-        return Integer.compare(playerId, o.getPlayerId());
+        return Double.compare(o.compositeScore, this.compositeScore);
     }
 
     @Override
     public boolean equals(Object obj) {
         if(obj instanceof Player player){
-            return playerId == player.getPlayerId();
+            return playerId == player.playerId;
         }
         return false;
     }
