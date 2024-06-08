@@ -1,5 +1,6 @@
 package com.group.NBAGManager;
 
+import com.group.NBAGManager.model.GuiCreator;
 import com.group.NBAGManager.model.CurrentSession;
 import com.group.NBAGManager.model.Graph.JourneyGraphHelper;
 import com.group.NBAGManager.model.Graph.WeightedGraph;
@@ -51,7 +52,7 @@ public class Journey {
         //setting the best route in the bestRoute text area
         bestRoute.setFont(bestRoute.getFont().deriveFont(Font.BOLD));
         StringBuilder shortestPathSB = new StringBuilder();
-        for(int i = 0; i < shortestPath.size(); i++){
+        for(int i = 0; i < shortestPath.size()-1; i++){ //excluding the last vertex (repeated vertex)
             shortestPathSB.append((i + 1))
                     .append(". ").append(shortestPath.get(i))
                     .append(" (")
@@ -59,6 +60,7 @@ public class Journey {
                     .append(")\n");
         }
         bestRoute.setText(shortestPathSB.toString());
+        System.out.println(shortestPathSB);
 
         //setting the total distance
         totalDistanceLbl.setText("Total Distance: " + journeyGraph.getTotalDistance(shortestPath) + " KMs");
@@ -132,5 +134,10 @@ public class Journey {
         nextLocation.setText(shortestPath.get(nextLocationIndex));
         nextLocation.revalidate();
         nextLocation.repaint();
+    }
+
+    private void createUIComponents() {
+        JButton nextButton = GuiCreator.createButton("Login", new Font("Roboto Mono", Font.BOLD, 15), Color.decode("#646669"), Color.decode("#323437"), false, 1, 4);
+        getNextLocationBtn = nextButton;
     }
 }

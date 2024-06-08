@@ -1,4 +1,4 @@
-package com.group.NBAGManager.LoginPage;
+package com.group.NBAGManager.model;
 import javax.swing.*;
 import java.awt.*;
 

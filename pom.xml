@@ -20,6 +20,4 @@
             <version>12.7.0.jre11-preview</version>
         </dependency>
     </dependencies>
-
-
 </project>
