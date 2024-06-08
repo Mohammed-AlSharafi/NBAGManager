@@ -15,6 +15,7 @@ import java.util.*;
 import java.util.List;
 
 public class AddPlayer {
+    private JFrame frame;
     private JPanel panelMain;
     private JButton SearchId;
     private JButton SearchName;
@@ -22,6 +23,7 @@ public class AddPlayer {
     private JTable playersTable;
     private JScrollPane scroll;
     private JTextField searchField;
+    private JButton backButton;
     public TeamRepository teamRepository;
     private Map<String, Player> playerMap = new HashMap<>();
     List<Player> teamPlayers;
@@ -50,6 +52,16 @@ public class AddPlayer {
                 }
             }
         });
+        backButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                frame.dispose();
+            }
+        });
+    }
+
+    public JFrame getFrame() {
+        return frame;
     }
 
     private void setPlayersTable(){
@@ -169,10 +181,13 @@ static class CustomCellRenderer extends DefaultTableCellRenderer {
         if(response==0){
             if(!checkSize()) JOptionPane.showMessageDialog(null, "Team size will exceed cap. \nPlayer addition cancelled.");
             else{
-                JFormattedTextField salaryfield = setTextField();
-                int input = JOptionPane.showConfirmDialog(null, salaryfield, "Please enter player's salary. ", JOptionPane.OK_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE);
+                JFormattedTextField salaryField = setTextField();
+                JPanel panel = new JPanel(new GridLayout(0, 1));
+                panel.add(new JLabel("Please enter player's salary: "));
+                panel.add(salaryField);
+                int input = JOptionPane.showConfirmDialog(null, panel, "Player Salary", JOptionPane.OK_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE);
                 if(input == JOptionPane.OK_OPTION){
-                    double salary = ((Number)salaryfield.getValue()).doubleValue();
+                    double salary = ((Number)salaryField.getValue()).doubleValue();
                     String salary_check = "Salary is under minimum. Players with more than 20.0 points per game have minimum salary of 3000.";
                     salary_check+="Players with less points have minimum salary of 1000.";
                     salary_check+="Your current player has "+player.getPoints()+" points.";
@@ -255,10 +270,10 @@ static class CustomCellRenderer extends DefaultTableCellRenderer {
     }
 
     public void displayForm(){
-        JFrame frame = new JFrame("AddPlayer");
+        frame = new JFrame("AddPlayer");
         frame.setContentPane(panelMain);
         frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-        frame.setSize(1250,600);
+        frame.setSize(1000,500);
         frame.setLocationRelativeTo(null);
         frame.setResizable(false);
         frame.setVisible(true);
