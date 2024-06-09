@@ -127,22 +127,21 @@ public class App {
     }
 
     private void displayPlayers(List<Player> players) {
-        String[] columnNames = {"Name", "Age", "Height", "Weight", "Position", "Salary", "Points", "Rebounds", "Assists", "Steals", "Blocks"};
+        String[] columnNames = {"Name", "Height", "Weight", "Position", "Salary", "Points", "Rebounds", "Assists", "Steals", "Blocks"};
         Object[][] data = new Object[players.size()][columnNames.length];
 
         for (int i = 0; i < players.size(); i++) {
             Player player = players.get(i);
             data[i][0] = player.getFirstName() + " " + player.getLastName();
-            data[i][1] = player.getAge();
-            data[i][2] = player.getHeight();
-            data[i][3] = player.getWeight();
-            data[i][4] = player.getPosition();
-            data[i][5] = player.getSalary();
-            data[i][6] = player.getPoints();
-            data[i][7] = player.getRebounds();
-            data[i][8] = player.getAssists();
-            data[i][9] = player.getSteals();
-            data[i][10] = player.getBlocks();
+            data[i][1] = player.getHeight();
+            data[i][2] = player.getWeight();
+            data[i][3] = player.getPosition();
+            data[i][4] = player.getSalary();
+            data[i][5] = player.getPoints();
+            data[i][6] = player.getRebounds();
+            data[i][7] = player.getAssists();
+            data[i][8] = player.getSteals();
+            data[i][9] = player.getBlocks();
         }
 
         TableModel dataModel = new DefaultTableModel(data, columnNames) {
@@ -166,7 +165,6 @@ public class App {
                     case 7:
                     case 8:
                     case 9:
-                    case 10:
                         return Double.class;
                     default:
                         return Object.class;
@@ -179,16 +177,15 @@ public class App {
 
         // Adjust column widths
         displayTable.getColumnModel().getColumn(0).setPreferredWidth(170); // Name
-        displayTable.getColumnModel().getColumn(1).setPreferredWidth(60);  // Age
-        displayTable.getColumnModel().getColumn(2).setPreferredWidth(60);  // Height
-        displayTable.getColumnModel().getColumn(3).setPreferredWidth(60);  // Weight
-        displayTable.getColumnModel().getColumn(4).setPreferredWidth(100); // Position
-        displayTable.getColumnModel().getColumn(5).setPreferredWidth(70); // Salary
-        displayTable.getColumnModel().getColumn(6).setPreferredWidth(70); // Points
-        displayTable.getColumnModel().getColumn(7).setPreferredWidth(70); // Rebounds
-        displayTable.getColumnModel().getColumn(8).setPreferredWidth(70); // Assists
-        displayTable.getColumnModel().getColumn(9).setPreferredWidth(70); // Steals
-        displayTable.getColumnModel().getColumn(10).setPreferredWidth(70); // Blocks
+        displayTable.getColumnModel().getColumn(1).setPreferredWidth(60);  // Height
+        displayTable.getColumnModel().getColumn(2).setPreferredWidth(60);  // Weight
+        displayTable.getColumnModel().getColumn(3).setPreferredWidth(100); // Position
+        displayTable.getColumnModel().getColumn(4).setPreferredWidth(70); // Salary
+        displayTable.getColumnModel().getColumn(5).setPreferredWidth(70); // Points
+        displayTable.getColumnModel().getColumn(6).setPreferredWidth(70); // Rebounds
+        displayTable.getColumnModel().getColumn(7).setPreferredWidth(70); // Assists
+        displayTable.getColumnModel().getColumn(8).setPreferredWidth(70); // Steals
+        displayTable.getColumnModel().getColumn(9).setPreferredWidth(70); // Blocks
 
         // Set custom renderer for all columns
         for (int i = 0; i < displayTable.getColumnCount(); i++) {
