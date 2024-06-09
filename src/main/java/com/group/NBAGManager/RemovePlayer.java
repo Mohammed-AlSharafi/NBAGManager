@@ -29,18 +29,13 @@ public class RemovePlayer {
     private Map<String, Player> playerMap = new HashMap<>();
 
     public RemovePlayer(){
+        //get instance of team repository for team pool
         repo = RepositoryHandler.getInstance().getTeamRepository();
 
-        //returns the value of component being resized
-        playersTable.addComponentListener(new ComponentAdapter() {
-            @Override
-            public void componentResized(ComponentEvent e) {
-                super.componentResized(e);
-                System.out.println(playersTable.getSelectedRow());
-            }
-        });
-        displayPlayers();
-        addMouseListenerToTable();
+        displayPlayers();/*creates the table for the Free Agent Market*/
+        addMouseListenerToTable();/*adds a mouse listener to the table*/
+
+        //handles search bar function
         searchField.addKeyListener(new KeyAdapter() {
             @Override
             public void keyReleased(KeyEvent e) {
@@ -50,6 +45,8 @@ public class RemovePlayer {
                 }
             }
         });
+
+        //method for going back to previous panel
         backButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -62,6 +59,7 @@ public class RemovePlayer {
         return frame;
     }
 
+    //method for highlighting searched player
     private void scrollToPlayerByName(String playerName) {
         DefaultTableModel model = (DefaultTableModel) playersTable.getModel();
         for (int row = 0; row < model.getRowCount(); row++) {
@@ -74,12 +72,14 @@ public class RemovePlayer {
 //        JOptionPane.showMessageDialog(panelMain, "Player with name " + playerName + " not found.", "Info", JOptionPane.INFORMATION_MESSAGE);
     }
 
+    //return row number of searched player
     private Player getPlayerFromRow(int row) {
         DefaultTableModel model = (DefaultTableModel) playersTable.getModel();
         String playerName = (String) model.getValueAt(row, 0);
         return playerMap.get(playerName); // Retrieve player from the map
     }
 
+    //method for displaying Free Agent Market
     private void displayPlayers() {
         list = repo.findAll();
         String[] columnNames = {"Name", "Height", "Weight", "Position", "Salary", "Points", "Rebounds", "Assists", "Steals", "Blocks"};
@@ -101,12 +101,15 @@ public class RemovePlayer {
             playerMap.put(playername,player);
         }
 
+        //format for table
         TableModel dataModel = new DefaultTableModel(data, columnNames) {
+            //cells are not editable
             @Override
             public boolean isCellEditable(int row, int column) {
                 return false;
             }
 
+            //method to modify returned value for certain columns
             @Override
             public Class<?> getColumnClass(int columnIndex) {
                 return switch (columnIndex) {
@@ -118,6 +121,7 @@ public class RemovePlayer {
             }
         };
 
+        //sets the model of the table as dataModel
         playersTable.setModel(dataModel);
         playersTable.setRowSorter(new TableRowSorter<>(dataModel));
 
@@ -139,6 +143,7 @@ public class RemovePlayer {
         }
     }
 
+    //customizes the appearance of JTable cells, adjusting font and colors based on selection
     static class CustomCellRenderer extends DefaultTableCellRenderer {
         @Override
         public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
@@ -156,6 +161,7 @@ public class RemovePlayer {
         }
     }
 
+    //sets the frame to be displayable
     public void displayForm(){
         frame = new JFrame("RemovePlayer");
         frame.setContentPane(panelMain);
@@ -166,13 +172,14 @@ public class RemovePlayer {
         frame.setVisible(true);
     }
 
+    //creates mouse listener for the table
     private void addMouseListenerToTable(){
         playersTable.addMouseListener(new MouseAdapter() {
+            //method for handling row clicks
             @Override
             public void mouseClicked(MouseEvent e) {
                 if(e.getClickCount()==2){
                     int row = playersTable.rowAtPoint(e.getPoint());
-                    int column = playersTable.columnAtPoint(e.getPoint());
                     if(!(row<0)){
                         String playerName = (String) playersTable.getValueAt(row,0);
                         Player player = playerMap.get(playerName);
@@ -183,7 +190,9 @@ public class RemovePlayer {
         });
     }
 
+    //Handles logic for removing players
     private void handleRowClick(int row, Player player){
+        list = repo.findAll();
         String message = "Remove Player?";
         String[] options = {"Yes","No"};
         int response = JOptionPane.showOptionDialog(null,message,"Player Removal",JOptionPane.DEFAULT_OPTION,JOptionPane.QUESTION_MESSAGE, null, options, null);
@@ -195,11 +204,11 @@ public class RemovePlayer {
                 model.removeRow(row);
             }
             else if(list.size()==10)JOptionPane.showMessageDialog(null,"Team size is less than minimum.");
-            else if(checkTeamPositions(player)<2){
+            else if(checkTeamPositions(player)<=2){
                 String position = player.getPosition();
-                if(position.equals("Center"))JOptionPane.showMessageDialog(null,"The number of Centers in your team is less than the minimum(2).");
-                else if(position.equals("Guard"))JOptionPane.showMessageDialog(null,"The number of Guards in your team is less than the minimum(2).");
-                else JOptionPane.showMessageDialog(null,"The number of Forwards in your team is less than the minimum(2).");
+                if(position.equals("Center"))JOptionPane.showMessageDialog(null,"The number of Centers in your team will be less than the minimum(2).");
+                else if(position.equals("Guard"))JOptionPane.showMessageDialog(null,"The number of Guards in your team will be less than the minimum(2).");
+                else JOptionPane.showMessageDialog(null,"The number of Forwards in your team will be less than the minimum(2).");
             }
             else{
                 repo.deleteById(player.getPlayerId());
@@ -210,6 +219,7 @@ public class RemovePlayer {
         }
     }
 
+    //checks the number of certain player position in a team
     private int checkTeamPositions(Player player){
         String role = player.getPosition();
         int count = 0;
