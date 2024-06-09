@@ -118,9 +118,8 @@ public class RemovePlayer {
             @Override
             public Class<?> getColumnClass(int columnIndex) {
                 return switch (columnIndex) {
-                    case 0, 4 -> String.class;
-                    case 1 -> Integer.class;
-                    case 2, 3, 5, 6, 7, 8, 9 -> Double.class;
+                    case 0, 3 -> String.class;
+                    case 1, 2, 4, 5, 6, 7, 8 -> Double.class;
                     default -> Object.class;
                 };
             }
@@ -183,12 +182,10 @@ public class RemovePlayer {
             //method for handling row clicks
             @Override
             public void mouseClicked(MouseEvent e) {
-                if(e.getClickCount()==2){
-                    int row = playersTable.rowAtPoint(e.getPoint());
-                    if(!(row<0)){
-                        String playerName = (String) playersTable.getValueAt(row,0);
-                        Player player = playerMap.get(playerName);
-                        handleRowClick(row, player);
+                if (e.getClickCount() == 2) {
+                    int row = playersTable.convertRowIndexToModel(playersTable.rowAtPoint(e.getPoint()));
+                    if (!(row < 0)) {
+                        handleRowClick(row);
                     }
                 }
             }
