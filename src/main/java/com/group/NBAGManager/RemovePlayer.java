@@ -6,6 +6,7 @@ import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableModel;
 import javax.swing.table.TableRowSorter;
 
+import com.group.NBAGManager.components.RoundedButton;
 import com.group.NBAGManager.model.Player;
 import com.group.NBAGManager.model.RepositoryHandler;
 import com.group.NBAGManager.repository.TeamRepository;
@@ -141,6 +142,10 @@ public class RemovePlayer {
         for (int i = 0; i < playersTable.getColumnCount(); i++) {
             playersTable.getColumnModel().getColumn(i).setCellRenderer(new CustomCellRenderer());
         }
+    }
+
+    private void createUIComponents() {
+        backButton = new RoundedButton("Back");
     }
 
     //customizes the appearance of JTable cells, adjusting font and colors based on selection
