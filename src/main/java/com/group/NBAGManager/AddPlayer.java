@@ -1,8 +1,7 @@
 package com.group.NBAGManager;
 
-import com.group.NBAGManager.model.CurrentSession;
-import com.group.NBAGManager.model.Player;
-import com.group.NBAGManager.model.RepositoryHandler;
+import com.group.NBAGManager.components.RoundedButton;
+import com.group.NBAGManager.model.*;
 import com.group.NBAGManager.repository.PlayerRepository;
 import com.group.NBAGManager.repository.TeamRepository;
 
@@ -86,7 +85,7 @@ public class AddPlayer {
 
         for (int i = 0; i < unOwnedPlayers.size(); i++) {
             Player player = unOwnedPlayers.get(i);
-            String playerName = player.getFirstName() + " " + player.getLastName();
+            String playerName = player.getFullName();
             data[i][0] = playerName;
             data[i][1] = player.getHeight();
             data[i][2] = player.getWeight();
@@ -138,6 +137,10 @@ public class AddPlayer {
             playersTable.getColumnModel().getColumn(i).setCellRenderer(new CustomCellRenderer());
         }
         scroll.setViewportView(playersTable);
+    }
+
+    private void createUIComponents() {
+        backButton = new RoundedButton("Back");
     }
 
     //customizes the appearance of JTable cells, adjusting font and colors based on selection

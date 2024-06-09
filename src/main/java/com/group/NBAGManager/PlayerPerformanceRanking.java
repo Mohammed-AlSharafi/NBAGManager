@@ -1,6 +1,6 @@
 package com.group.NBAGManager;
 
-import com.group.NBAGManager.model.GuiCreator;
+import com.group.NBAGManager.components.RoundedButton;
 import com.group.NBAGManager.model.Player;
 import com.group.NBAGManager.model.RepositoryHandler;
 import com.group.NBAGManager.repository.TeamRepository;
@@ -69,19 +69,9 @@ public class PlayerPerformanceRanking {
         JScrollPane scrollPane = new JScrollPane(playerTable);
 
         //create the return button to return to main page
-        JButton returnButton = GuiCreator.createButton("Return", new Font("Roboto Mono", Font.BOLD, 15), Color.decode("#646669"), Color.decode("#323437"), false, 1, 4);
+        JButton returnButton = new RoundedButton("Return");
+        returnButton.setMargin(new Insets(5, 30, 5, 30));
 
-        //added MouseListener so that the button glows when hovering over it
-        returnButton.addMouseListener(new MouseAdapter() {
-            @Override
-            public void mouseEntered(MouseEvent evt) {
-                returnButton.setForeground(Color.white);
-            }
-            @Override
-            public void mouseExited(MouseEvent evt) {
-                returnButton.setForeground(Color.decode("#646669"));
-            }
-        });
         returnButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -89,16 +79,14 @@ public class PlayerPerformanceRanking {
             }
         });
 
-        //set the image as the content pane
-        ImageIcon backgroundImage = new ImageIcon("src/main/resources/images/login-background.jpeg");
-        JLabel backgroundLabel = new JLabel(backgroundImage);
+        //set the label as the content pane
+        JLabel backgroundLabel = new JLabel();
         backgroundLabel.setLayout(new GridBagLayout());
         frame.setContentPane(backgroundLabel);
 
         //set the title of the page
         JLabel titleLabel = new JLabel("Player Performance Ranking", SwingConstants.CENTER);
-        titleLabel.setFont(new Font("Roboto", Font.BOLD, 25));
-        titleLabel.setForeground(Color.decode("#E2B714"));
+        titleLabel.setFont(new Font("Arial", Font.BOLD, 20));
 
         //constraints for the title
         GridBagConstraints gbcTitle = new GridBagConstraints();
@@ -133,21 +121,6 @@ public class PlayerPerformanceRanking {
         backgroundLabel.add(titleLabel, gbcTitle); //add the label to the top of the layout
         backgroundLabel.add(tablePanel, gbcTable);//add the table panel to display the player and their performance score
         backgroundLabel.add(returnButton, gbcButton); //add the button panel to the bottom
-
-        //ensure the image resizes with the window
-        Image img = backgroundImage.getImage();
-        ImageIcon finalBackgroundImage = new ImageIcon(img.getScaledInstance(frame.getWidth(), frame.getHeight(), Image.SCALE_SMOOTH));
-
-        frame.addComponentListener(new ComponentAdapter() {
-            @Override
-            public void componentResized(ComponentEvent e) {
-                Image img = finalBackgroundImage.getImage();
-                Image resizedImg = img.getScaledInstance(frame.getWidth(), frame.getHeight(), Image.SCALE_SMOOTH);
-                finalBackgroundImage.setImage(resizedImg);
-                backgroundLabel.setIcon(finalBackgroundImage);
-            }
-        });
-
 
         //display the window in the middle of the screen
         frame.setLocationRelativeTo(null);
