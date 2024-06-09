@@ -8,13 +8,16 @@ import com.group.NBAGManager.repository.TeamRepository;
 import javax.swing.*;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableRowSorter;
 import javax.swing.table.TableModel;
 import javax.swing.text.NumberFormatter;
 import java.awt.*;
 import java.awt.event.*;
 import java.text.NumberFormat;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class AddPlayer {
     private JFrame frame;
@@ -36,6 +39,7 @@ public class AddPlayer {
         teamRepository = RepositoryHandler.getInstance().getTeamRepository();
         //creates player repository for Free Agent Market
         playerRepository = RepositoryHandler.getInstance().getPlayerRepository();
+
         teamPlayers = teamRepository.findAll();
         marketPlayers = playerRepository.findAll();
 
@@ -67,7 +71,7 @@ public class AddPlayer {
     }
 
     //creates player table for Free Agent Market
-    private void setPlayersTable(){
+    private void setPlayersTable() {
         //load the table
         ArrayList<Player> unOwnedPlayers = new ArrayList<>(marketPlayers);
         unOwnedPlayers.removeAll(teamPlayers);
@@ -78,9 +82,10 @@ public class AddPlayer {
         };
         Object[][] data = new Object[unOwnedPlayers.size()][columnNames.length];
         playerMap.clear();
+
         for (int i = 0; i < unOwnedPlayers.size(); i++) {
             Player player = unOwnedPlayers.get(i);
-            String playerName = player.getFirstName()+" "+player.getLastName();
+            String playerName = player.getFullName();
             data[i][0] = playerName;
             data[i][1] = player.getHeight();
             data[i][2] = player.getWeight();
@@ -90,29 +95,31 @@ public class AddPlayer {
             data[i][6] = player.getAssists();
             data[i][7] = player.getSteals();
             data[i][8] = player.getBlocks();
-            playerMap.put(playerName,player);
+            playerMap.put(playerName, player);
         }
 
         //format for table
         TableModel model = new DefaultTableModel(data, columnNames) {
             //method to modify returned value for certain columns
             @Override
-            public Class<?> getColumnClass(int column){
+            public Class<?> getColumnClass(int column) {
                 return switch (column) {
-                    case 0, 4 -> String.class;
-                    case 1 -> Integer.class;
-                    case 2, 3, 5, 6, 7, 8 -> Double.class;
+                    case 0, 3 -> String.class;
+                    case 1, 2, 4, 5, 6, 7 -> Double.class;
                     default -> Object.class;
                 };
             }
+
             //cells are not editable
             @Override
             public boolean isCellEditable(int row, int column) {
                 return false;
             }
         };
+
         //sets the model of the table as dataModel
         playersTable.setModel(model);
+        playersTable.setRowSorter(new TableRowSorter<>(model));
 
         // Adjust column widths
         playersTable.getColumnModel().getColumn(0).setPreferredWidth(170); // Name
@@ -127,10 +134,10 @@ public class AddPlayer {
 
         // Set custom renderer for all columns
         for (int i = 0; i < playersTable.getColumnCount(); i++) {
-        playersTable.getColumnModel().getColumn(i).setCellRenderer(new CustomCellRenderer());
-    }
+            playersTable.getColumnModel().getColumn(i).setCellRenderer(new CustomCellRenderer());
+        }
         scroll.setViewportView(playersTable);
-}
+    }
 
     private void createUIComponents() {
         backButton = new RoundedButton("Back");
@@ -138,34 +145,32 @@ public class AddPlayer {
 
     //customizes the appearance of JTable cells, adjusting font and colors based on selection
     static class CustomCellRenderer extends DefaultTableCellRenderer {
-    @Override
-    public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
-        JLabel label = new JLabel(" " + value.toString());
-        label.setFont(new Font("Serif", Font.PLAIN, getFont().getSize()));
-        label.setOpaque(true);
-        if (isSelected) {
-            label.setBackground(table.getSelectionBackground());
-            label.setForeground(table.getSelectionForeground());
-        } else {
-            label.setBackground(table.getBackground());
-            label.setForeground(table.getForeground());
+        @Override
+        public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
+            JLabel label = new JLabel(" " + value.toString());
+            label.setFont(new Font("Serif", Font.PLAIN, getFont().getSize()));
+            label.setOpaque(true);
+            if (isSelected) {
+                label.setBackground(table.getSelectionBackground());
+                label.setForeground(table.getSelectionForeground());
+            } else {
+                label.setBackground(table.getBackground());
+                label.setForeground(table.getForeground());
+            }
+            return label;
         }
-        return label;
     }
-}
 
     //adds mouse listener to table
-    private void addMouseFunction(){
+    private void addMouseFunction() {
         playersTable.addMouseListener(new MouseAdapter() {
             //method for handling row clicks
             @Override
             public void mouseClicked(MouseEvent e) {
-                if(e.getClickCount()==2){
-                    int row = playersTable.rowAtPoint(e.getPoint());
-                    if(!(row<0)){
-                        Player player = getPlayerFromRow(row);
-                        handleRowClick(player);
-                        setPlayersTable();
+                if (e.getClickCount() == 2) {
+                    int row = playersTable.convertRowIndexToModel(playersTable.getSelectedRow());
+                    if (!(row < 0)) {
+                        handleRowClick(row);
                     }
                 }
             }
@@ -173,38 +178,48 @@ public class AddPlayer {
     }
 
     //handles logic for adding players
-    private void handleRowClick(Player player){
-        if(checkPlayer(player)){
+    private void handleRowClick(int row) {
+        Player player = getPlayerFromRow(row);
+
+        if (checkPlayer(player)) {
             JOptionPane.showMessageDialog(null, "Player already in team.");
             return;
         }
+
         String message = "Add Player?";
-        String[] options = {"Yes","No"};
-        int response = JOptionPane.showOptionDialog(null, message, "Player addition", JOptionPane.DEFAULT_OPTION, JOptionPane.QUESTION_MESSAGE,null,options,null);
-        if(response==0){
-            if(!checkSize()) JOptionPane.showMessageDialog(null, "Team size will exceed cap. \nPlayer addition cancelled.");
-            else{
+        String[] options = {"Yes", "No"};
+        int response = JOptionPane.showOptionDialog(null, message, "Player addition", JOptionPane.DEFAULT_OPTION, JOptionPane.QUESTION_MESSAGE, null, options, null);
+        if (response == 0) {
+            if (!checkSize())
+                JOptionPane.showMessageDialog(null, "Team size will exceed cap. \nPlayer addition cancelled.");
+            else {
                 JFormattedTextField salaryField = setTextField();
                 JPanel panel = new JPanel(new GridLayout(0, 1));
                 panel.add(new JLabel("Please enter player's salary: "));
                 panel.add(salaryField);
+
                 int input = JOptionPane.showConfirmDialog(null, panel, "Player Salary", JOptionPane.OK_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE);
-                if(input == JOptionPane.OK_OPTION){
-                    double salary = ((Number)salaryField.getValue()).doubleValue();
+                if (input == JOptionPane.OK_OPTION) {
+                    double salary = ((Number) salaryField.getValue()).doubleValue();
                     String salary_check = "Salary is under minimum. Players with more than 20.0 points per game have minimum salary of 3000.";
-                    salary_check+="Players with less points have minimum salary of 1000.";
-                    salary_check+="Your current player has "+player.getPoints()+" points.";
-                    if(checkPlayerSalary(player,salary))JOptionPane.showMessageDialog(null,salary_check);
-                    else{
-                        if(!checkTeamSalary(salary)) JOptionPane.showMessageDialog(null,"This player's salary will exceed the team salary cap.");
-                        else{
+                    salary_check += "Players with less points have minimum salary of 1000.";
+                    salary_check += "Your current player has " + player.getPoints() + " points.";
+
+                    if (checkPlayerSalary(player, salary))
+                        JOptionPane.showMessageDialog(null, salary_check);
+                    else {
+                        if (!checkTeamSalary(salary))
+                            JOptionPane.showMessageDialog(null, "This player's salary will exceed the team salary cap.");
+                        else {
                             player.setSalary(salary);
                             teamRepository.save(player);
 
                             teamPlayers.add(player); //to update current cached team players
                             marketPlayers.remove(player); //to update current cached market players
+                            DefaultTableModel model = (DefaultTableModel) playersTable.getModel();
+                            model.removeRow(row);
 
-                            JOptionPane.showMessageDialog(null,"Player has been added to team.");
+                            JOptionPane.showMessageDialog(null, "Player has been added to team.");
                             teamPlayers = teamRepository.findAll();
                         }
                     }
@@ -213,7 +228,7 @@ public class AddPlayer {
         }
     }
 
-    //return row number of searched player
+    // get the player from the specified row
     private Player getPlayerFromRow(int row) {
         DefaultTableModel model = (DefaultTableModel) playersTable.getModel();
         String playerName = (String) model.getValueAt(row, 0);
@@ -225,8 +240,13 @@ public class AddPlayer {
         DefaultTableModel model = (DefaultTableModel) playersTable.getModel();
         for (int row = 0; row < model.getRowCount(); row++) {
             Player player = getPlayerFromRow(row);
-            if ((player.getFullName()).toLowerCase().contains(playerName.toLowerCase())){
-                playersTable.setRowSelectionInterval(row, row);
+            if (player.getFullName().toLowerCase().contains(playerName.toLowerCase())) {
+                // convert the row index to the index of the row actually visible
+                int index = playersTable.convertRowIndexToView(row);
+                playersTable.setRowSelectionInterval(index, index);
+
+                // scroll to the selected row
+                playersTable.scrollRectToVisible(playersTable.getCellRect(index, 0, true));
                 return;
             }
         }
@@ -234,7 +254,7 @@ public class AddPlayer {
     }
 
     //creates an input field that only accepts numbers
-    private JFormattedTextField setTextField(){
+    private JFormattedTextField setTextField() {
         NumberFormat numberFormat = NumberFormat.getInstance();
         NumberFormatter numberFormatter = new NumberFormatter(numberFormat);
         numberFormatter.setValueClass(Integer.class);
@@ -248,42 +268,41 @@ public class AddPlayer {
     }
 
     //checks if player already exists in team pool
-    private boolean checkPlayer(Player player){
+    private boolean checkPlayer(Player player) {
         Player check = teamRepository.findById(player.getPlayerId());
-        return check!=null;
+        return check != null;
     }
 
     //checks total salary of team plus selected player
-    private boolean checkTeamSalary(double Salary){
+    private boolean checkTeamSalary(double Salary) {
         System.out.println(Salary);
         double totalsalary = 0;
-        for(Player player : teamPlayers){
+        for (Player player : teamPlayers) {
             totalsalary += player.getSalary();
         }
-        totalsalary+=Salary;
+        totalsalary += Salary;
         System.out.println(totalsalary);
         return totalsalary <= 20000.0;
     }
 
     //checks player salary to see if it fits the requirement
-    private boolean checkPlayerSalary(Player player, double Salary){
+    private boolean checkPlayerSalary(Player player, double Salary) {
         double points = player.getPoints();
-        if(points>20.0){
-            return Salary<3000.0;
-        }
-        else return Salary<1000.0;
+        if (points > 20.0) {
+            return Salary < 3000.0;
+        } else return Salary < 1000.0;
     }
 
-    private boolean checkSize(){
-        return teamPlayers.size()<15;
+    private boolean checkSize() {
+        return teamPlayers.size() < 15;
     }
 
     //sets the frame to be displayable
-    public void displayForm(){
+    public void displayForm() {
         frame = new JFrame("AddPlayer");
         frame.setContentPane(panelMain);
         frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-        frame.setSize(1000,500);
+        frame.setSize(1000, 500);
         frame.setLocationRelativeTo(null);
         frame.setResizable(false);
         frame.setVisible(true);

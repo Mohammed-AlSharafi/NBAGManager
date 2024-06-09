@@ -65,6 +65,31 @@ public class Player implements Comparable<Player> {
         this.isContractRenewQueued = isContractRenewQueued;
     }
 
+    //used for APIHandler
+    public Player(int playerId, String firstName, String lastName, int age, double height, double weight, String position) {
+        this.playerId = playerId;
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.age = age;
+        this.height = height;
+        this.weight = weight;
+
+        switch (position) {
+            case "F":
+                position = "Forward";
+                break;
+            case "G":
+                position = "Guard";
+                break;
+            case "C":
+                position = "Center";
+                break;
+            default:
+                position = "";
+        }
+        this.position = position;
+    }
+
     //instance variables
     private int playerId;
     private String firstName;
@@ -239,7 +264,8 @@ public class Player implements Comparable<Player> {
         double blocksWeight = (position.equals("Center") || position.equals("Forward")) ? 3 : 1.0;
 
         // Calculate composite performance score
-        return points * pointsWeight + rebounds * reboundsWeight + steals * stealsWeight + assists * assistsWeight + blocks * blocksWeight;
+        double compositeScore = points * pointsWeight + rebounds * reboundsWeight + steals * stealsWeight + assists * assistsWeight + blocks * blocksWeight;
+        return Math.round(compositeScore * 100.0) / 100.0;
     }
 
     @Override
@@ -259,7 +285,18 @@ public class Player implements Comparable<Player> {
     @Override
     public boolean equals(Object obj) {
         if(obj instanceof Player player){
-            return playerId == player.playerId;
+            if (playerId != player.playerId) return false;
+            if (!getFullName().equals(player.getFullName())) return false;
+            if (height!=player.height) return  false;
+            if (weight != player.weight) return false;
+            if (!position.equals(player.position)) return false;
+            if (points != player.points) return false;
+            if (assists != player.assists) return false;
+            if (steals != player.steals) return false;
+            if (blocks != player.blocks) return false;
+            if (compositeScore != player.compositeScore) return false;
+
+            return true;
         }
         return false;
     }
