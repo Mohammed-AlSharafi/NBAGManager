@@ -70,7 +70,7 @@ public class AddPlayer {
         unOwnedPlayers.removeAll(teamPlayers);
 
         String[] columnNames = {
-                "Name", "Age", "Height", "Weight", "Position",
+                "Name", "Height", "Weight", "Position",
                 "Points", "Rebounds", "Assists", "Steals", "Blocks"
         };
         Object[][] data = new Object[unOwnedPlayers.size()][columnNames.length];
@@ -79,15 +79,14 @@ public class AddPlayer {
             Player player = unOwnedPlayers.get(i);
             String playerName = player.getFirstName()+" "+player.getLastName();
             data[i][0] = playerName;
-            data[i][1] = player.getAge();
-            data[i][2] = player.getHeight();
-            data[i][3] = player.getWeight();
-            data[i][4] = player.getPosition();
-            data[i][5] = player.getPoints();
-            data[i][6] = player.getRebounds();
-            data[i][7] = player.getAssists();
-            data[i][8] = player.getSteals();
-            data[i][9] = player.getBlocks();
+            data[i][1] = player.getHeight();
+            data[i][2] = player.getWeight();
+            data[i][3] = player.getPosition();
+            data[i][4] = player.getPoints();
+            data[i][5] = player.getRebounds();
+            data[i][6] = player.getAssists();
+            data[i][7] = player.getSteals();
+            data[i][8] = player.getBlocks();
             playerMap.put(playerName,player);
         }
 
@@ -97,7 +96,7 @@ public class AddPlayer {
                 return switch (column) {
                     case 0, 4 -> String.class;
                     case 1 -> Integer.class;
-                    case 2, 3, 5, 6, 7, 8, 9 -> Double.class;
+                    case 2, 3, 5, 6, 7, 8 -> Double.class;
                     default -> Object.class;
                 };
             }
@@ -110,15 +109,14 @@ public class AddPlayer {
 
         // Adjust column widths
         playersTable.getColumnModel().getColumn(0).setPreferredWidth(170); // Name
-        playersTable.getColumnModel().getColumn(1).setPreferredWidth(60);  // Age
-        playersTable.getColumnModel().getColumn(2).setPreferredWidth(60);  // Height
-        playersTable.getColumnModel().getColumn(3).setPreferredWidth(60);  // Weight
-        playersTable.getColumnModel().getColumn(4).setPreferredWidth(100); // Position
-        playersTable.getColumnModel().getColumn(5).setPreferredWidth(70); // Points
-        playersTable.getColumnModel().getColumn(6).setPreferredWidth(70); // Rebounds
-        playersTable.getColumnModel().getColumn(7).setPreferredWidth(70); // Assists
-        playersTable.getColumnModel().getColumn(8).setPreferredWidth(70); // Steals
-        playersTable.getColumnModel().getColumn(9).setPreferredWidth(70); // Blocks
+        playersTable.getColumnModel().getColumn(1).setPreferredWidth(60);  // Height
+        playersTable.getColumnModel().getColumn(2).setPreferredWidth(60);  // Weight
+        playersTable.getColumnModel().getColumn(3).setPreferredWidth(100); // Position
+        playersTable.getColumnModel().getColumn(4).setPreferredWidth(70); // Points
+        playersTable.getColumnModel().getColumn(5).setPreferredWidth(70); // Rebounds
+        playersTable.getColumnModel().getColumn(6).setPreferredWidth(70); // Assists
+        playersTable.getColumnModel().getColumn(7).setPreferredWidth(70); // Steals
+        playersTable.getColumnModel().getColumn(8).setPreferredWidth(70); // Blocks
 
         // Set custom renderer for all columns
         for (int i = 0; i < playersTable.getColumnCount(); i++) {
