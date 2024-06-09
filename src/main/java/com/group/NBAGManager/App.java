@@ -16,6 +16,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.util.HashSet;
 import java.util.List;
 
 public class App {
@@ -33,7 +34,8 @@ public class App {
     private JTable displayTable;
     private JFrame frame;
     private TeamRepository teamRepository;
-    List<Player> allPlayers;
+    private List<Player> allPlayers;
+    private List<Player> currentlyDisplayedPlayers;
 
     public App() {
         teamRepository = RepositoryHandler.getInstance().getTeamRepository();
@@ -99,18 +101,19 @@ public class App {
             @Override
             public void actionPerformed(ActionEvent e) {
                 Filter filter = new Filter();
-                filter.displayForm();
+                filter.displayForm(currentlyDisplayedPlayers);
 
                 filter.getFrame().addWindowListener(new WindowAdapter() {
                     @Override
                     public void windowClosed(WindowEvent e) {
-                        List<Player> filteredPlayers = filter.getFilteredPlayers();
-                        if(filteredPlayers != allPlayers) {
-                            resetButton.setVisible(true);
-                            displayPlayers(filteredPlayers);
-                        }else {
-                            resetButton.setVisible(false);
-                        }
+                    List<Player> filteredPlayers = filter.getFilteredPlayers();
+                    if(!new HashSet<>(filteredPlayers).containsAll(allPlayers)) {
+                        resetButton.setVisible(true);
+                        displayPlayers(filteredPlayers);
+                    }else {
+                        resetButton.setVisible(false);
+                        displayPlayers(filteredPlayers);
+                    }
                     }
                 });
             }
@@ -142,6 +145,7 @@ public class App {
     }
 
     private void displayPlayers(List<Player> players) {
+        currentlyDisplayedPlayers = players;
         String[] columnNames = {"Name", "Height", "Weight", "Position", "Salary", "Points", "Rebounds", "Assists", "Steals", "Blocks"};
         Object[][] data = new Object[players.size()][columnNames.length];
 

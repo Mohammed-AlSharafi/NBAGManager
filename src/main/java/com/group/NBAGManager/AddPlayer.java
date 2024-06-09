@@ -30,14 +30,16 @@ public class AddPlayer {
     private JScrollPane scroll;
     private JTextField searchField;
     private JButton backButton;
+    private JButton removePlayerButton;
     public TeamRepository teamRepository;
     private Map<String, Player> playerMap = new HashMap<>();
     List<Player> teamPlayers;
     List<Player> marketPlayers;
 
     public AddPlayer() {
-        //setting back/OK button to default
-        backButton.setEnabled(false);
+        //setting back/OK button to off
+        if(CurrentSession.getInstance().getLoggedInUser().isFirstLogin())
+            backButton.setEnabled(false);
         //creates team repository for checking team size
         teamRepository = RepositoryHandler.getInstance().getTeamRepository();
         //creates player repository for Free Agent Market
@@ -73,6 +75,13 @@ public class AddPlayer {
                     app.displayForm();
                 }
                 frame.dispose();
+            }
+        });
+        removePlayerButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                RemovePlayer removePlayer = new RemovePlayer();
+                removePlayer.displayForm();
             }
         });
     }
@@ -154,6 +163,7 @@ public class AddPlayer {
         User user = CurrentSession.getInstance().getLoggedInUser();
         String backBtnString = user.isFirstLogin()? "OK" : "Back";
         backButton = new RoundedButton(backBtnString);
+        removePlayerButton = new RoundedButton("Remove Player");
     }
 
     //customizes the appearance of JTable cells, adjusting font and colors based on selection

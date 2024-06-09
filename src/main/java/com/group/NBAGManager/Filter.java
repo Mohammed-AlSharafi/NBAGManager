@@ -90,8 +90,8 @@ public class Filter {
 
     public Filter() {
         TeamRepository teamRepository = RepositoryHandler.getInstance().getTeamRepository();
-        List<Player> players = teamRepository.findAll();
-        filteredPlayers = players;
+        players = teamRepository.findAll();
+//        filteredPlayers = players;
 
         searchButton.addActionListener(new ActionListener() {
             @Override
@@ -187,7 +187,6 @@ public class Filter {
 
                 filteredPlayers = selectedPlayers;
                 frame.dispose();
-
             }
         });
 
@@ -237,7 +236,9 @@ public class Filter {
         return isNumeric(text) || isNull(text);
     }
 
-    public void displayForm() {
+    public void displayForm(List<Player> currentlyDisplayedPlayers) {
+        filteredPlayers = currentlyDisplayedPlayers;
+
         frame = new JFrame("Filter");
         frame.setContentPane(panelMain);
         frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
