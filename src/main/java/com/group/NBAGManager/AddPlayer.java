@@ -72,7 +72,6 @@ public class AddPlayer {
     }
 
     //creates player table for Free Agent Market
-    private void setPlayersTable(){
     private void setPlayersTable() {
         //load the table
         ArrayList<Player> unOwnedPlayers = new ArrayList<>(marketPlayers);
@@ -97,7 +96,7 @@ public class AddPlayer {
             data[i][6] = player.getAssists();
             data[i][7] = player.getSteals();
             data[i][8] = player.getBlocks();
-            playerMap.put(playerName,player);
+            playerMap.put(playerName, player);
         }
 
         //format for table
@@ -106,9 +105,8 @@ public class AddPlayer {
             @Override
             public Class<?> getColumnClass(int column) {
                 return switch (column) {
-                    case 0, 4 -> String.class;
-                    case 1 -> Integer.class;
-                    case 2, 3, 5, 6, 7, 8 -> Double.class;
+                    case 0, 3 -> String.class;
+                    case 1, 2, 4, 5, 6, 7 -> Double.class;
                     default -> Object.class;
                 };
             }
@@ -122,6 +120,7 @@ public class AddPlayer {
 
         //sets the model of the table as dataModel
         playersTable.setModel(model);
+        playersTable.setRowSorter(new TableRowSorter<>(model));
 
         // Adjust column widths
         playersTable.getColumnModel().getColumn(0).setPreferredWidth(170); // Name
@@ -143,34 +142,32 @@ public class AddPlayer {
 
     //customizes the appearance of JTable cells, adjusting font and colors based on selection
     static class CustomCellRenderer extends DefaultTableCellRenderer {
-    @Override
-    public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
-        JLabel label = new JLabel(" " + value.toString());
-        label.setFont(new Font("Serif", Font.PLAIN, getFont().getSize()));
-        label.setOpaque(true);
-        if (isSelected) {
-            label.setBackground(table.getSelectionBackground());
-            label.setForeground(table.getSelectionForeground());
-        } else {
-            label.setBackground(table.getBackground());
-            label.setForeground(table.getForeground());
+        @Override
+        public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
+            JLabel label = new JLabel(" " + value.toString());
+            label.setFont(new Font("Serif", Font.PLAIN, getFont().getSize()));
+            label.setOpaque(true);
+            if (isSelected) {
+                label.setBackground(table.getSelectionBackground());
+                label.setForeground(table.getSelectionForeground());
+            } else {
+                label.setBackground(table.getBackground());
+                label.setForeground(table.getForeground());
+            }
+            return label;
         }
-        return label;
     }
-}
 
     //adds mouse listener to table
-    private void addMouseFunction(){
+    private void addMouseFunction() {
         playersTable.addMouseListener(new MouseAdapter() {
             //method for handling row clicks
             @Override
             public void mouseClicked(MouseEvent e) {
                 if (e.getClickCount() == 2) {
-                    int row = playersTable.rowAtPoint(e.getPoint());
-                    if(!(row<0)){
-                        Player player = getPlayerFromRow(row);
-                        handleRowClick(player);
-                        setPlayersTable();
+                    int row = playersTable.convertRowIndexToModel(playersTable.getSelectedRow());
+                    if (!(row < 0)) {
+                        handleRowClick(row);
                     }
                 }
             }
@@ -178,11 +175,14 @@ public class AddPlayer {
     }
 
     //handles logic for adding players
-    private void handleRowClick(Player player){
-        if(checkPlayer(player)){
+    private void handleRowClick(int row) {
+        Player player = getPlayerFromRow(row);
+
+        if (checkPlayer(player)) {
             JOptionPane.showMessageDialog(null, "Player already in team.");
             return;
         }
+
         String message = "Add Player?";
         String[] options = {"Yes", "No"};
         int response = JOptionPane.showOptionDialog(null, message, "Player addition", JOptionPane.DEFAULT_OPTION, JOptionPane.QUESTION_MESSAGE, null, options, null);
@@ -194,13 +194,16 @@ public class AddPlayer {
                 JPanel panel = new JPanel(new GridLayout(0, 1));
                 panel.add(new JLabel("Please enter player's salary: "));
                 panel.add(salaryField);
+
                 int input = JOptionPane.showConfirmDialog(null, panel, "Player Salary", JOptionPane.OK_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE);
                 if (input == JOptionPane.OK_OPTION) {
                     double salary = ((Number) salaryField.getValue()).doubleValue();
                     String salary_check = "Salary is under minimum. Players with more than 20.0 points per game have minimum salary of 3000.";
                     salary_check += "Players with less points have minimum salary of 1000.";
                     salary_check += "Your current player has " + player.getPoints() + " points.";
-                    if (checkPlayerSalary(player, salary)) JOptionPane.showMessageDialog(null, salary_check);
+
+                    if (checkPlayerSalary(player, salary))
+                        JOptionPane.showMessageDialog(null, salary_check);
                     else {
                         if (!checkTeamSalary(salary))
                             JOptionPane.showMessageDialog(null, "This player's salary will exceed the team salary cap.");
@@ -210,6 +213,8 @@ public class AddPlayer {
 
                             teamPlayers.add(player); //to update current cached team players
                             marketPlayers.remove(player); //to update current cached market players
+                            DefaultTableModel model = (DefaultTableModel) playersTable.getModel();
+                            model.removeRow(row);
 
                             JOptionPane.showMessageDialog(null, "Player has been added to team.");
                             teamPlayers = teamRepository.findAll();
@@ -232,7 +237,7 @@ public class AddPlayer {
         DefaultTableModel model = (DefaultTableModel) playersTable.getModel();
         for (int row = 0; row < model.getRowCount(); row++) {
             Player player = getPlayerFromRow(row);
-            if ((player.getFullName()).toLowerCase().contains(playerName.toLowerCase())) {
+            if (player.getFullName().toLowerCase().contains(playerName.toLowerCase())) {
                 playersTable.setRowSelectionInterval(row, row);
                 return;
             }
@@ -273,12 +278,11 @@ public class AddPlayer {
     }
 
     //checks player salary to see if it fits the requirement
-    private boolean checkPlayerSalary(Player player, double Salary){
+    private boolean checkPlayerSalary(Player player, double Salary) {
         double points = player.getPoints();
         if (points > 20.0) {
             return Salary < 3000.0;
-        }
-        else return Salary < 1000.0;
+        } else return Salary < 1000.0;
     }
 
     private boolean checkSize() {
@@ -286,7 +290,7 @@ public class AddPlayer {
     }
 
     //sets the frame to be displayable
-    public void displayForm(){
+    public void displayForm() {
         frame = new JFrame("AddPlayer");
         frame.setContentPane(panelMain);
         frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
