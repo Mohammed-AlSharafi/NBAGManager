@@ -28,7 +28,7 @@ public class RemovePlayer {
     private List<Player> list;
     private Map<String, Player> playerMap = new HashMap<>();
 
-    public RemovePlayer(){
+    public RemovePlayer() {
         //get instance of team repository for team pool
         repo = RepositoryHandler.getInstance().getTeamRepository();
 
@@ -65,7 +65,12 @@ public class RemovePlayer {
         for (int row = 0; row < model.getRowCount(); row++) {
             Player player = getPlayerFromRow(row);
             if ((player.getFullName()).toLowerCase().contains(playerName.toLowerCase())){
-                playersTable.setRowSelectionInterval(row, row);
+                // convert the row index to the index of the row actually visible
+                int index = playersTable.convertRowIndexToView(row);
+                playersTable.setRowSelectionInterval(index, index);
+
+                // scroll to the selected row
+                playersTable.scrollRectToVisible(playersTable.getCellRect(index, 0, true));
                 return;
             }
         }
@@ -98,7 +103,7 @@ public class RemovePlayer {
             data[i][7] = player.getAssists();
             data[i][8] = player.getSteals();
             data[i][9] = player.getBlocks();
-            playerMap.put(playername,player);
+            playerMap.put(playername, player);
         }
 
         //format for table
@@ -162,18 +167,18 @@ public class RemovePlayer {
     }
 
     //sets the frame to be displayable
-    public void displayForm(){
+    public void displayForm() {
         frame = new JFrame("RemovePlayer");
         frame.setContentPane(panelMain);
         frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-        frame.setSize(1000,500);
+        frame.setSize(1000, 500);
         frame.setLocationRelativeTo(null);
         frame.setResizable(false);
         frame.setVisible(true);
     }
 
     //creates mouse listener for the table
-    private void addMouseListenerToTable(){
+    private void addMouseListenerToTable() {
         playersTable.addMouseListener(new MouseAdapter() {
             //method for handling row clicks
             @Override
@@ -186,33 +191,39 @@ public class RemovePlayer {
                         handleRowClick(row, player);
                     }
                 }
-                }
+            }
         });
     }
 
     //Handles logic for removing players
-    private void handleRowClick(int row, Player player){
+    private void handleRowClick(int row) {
+        Player player = getPlayerFromRow(row);
+
         list = repo.findAll();
         String message = "Remove Player?";
-        String[] options = {"Yes","No"};
-        int response = JOptionPane.showOptionDialog(null,message,"Player Removal",JOptionPane.DEFAULT_OPTION,JOptionPane.QUESTION_MESSAGE, null, options, null);
-        if(response == 0){
-            if(list.size()<10){
+        String[] options = {"Yes", "No"};
+        int response = JOptionPane.showOptionDialog(null, message, "Player Removal", JOptionPane.DEFAULT_OPTION, JOptionPane.QUESTION_MESSAGE, null, options, null);
+        if (response == 0) {
+            if (list.size() < 10) {
                 repo.deleteById(player.getPlayerId());
-                JOptionPane.showMessageDialog(null, player.getFirstName()+" "+player.getLastName()+" has been removed.");
+                JOptionPane.showMessageDialog(null, player.getFirstName() + " " + player.getLastName() + " has been removed.");
                 DefaultTableModel model = (DefaultTableModel) playersTable.getModel();
                 model.removeRow(row);
             }
-            else if(list.size()==10)JOptionPane.showMessageDialog(null,"Team size is less than minimum.");
-            else if(checkTeamPositions(player)<=2){
+            else if (list.size() == 10)
+                JOptionPane.showMessageDialog(null, "Team size will be less than minimum.");
+            else if (checkTeamPositions(player) <= 2) {
                 String position = player.getPosition();
-                if(position.equals("Center"))JOptionPane.showMessageDialog(null,"The number of Centers in your team will be less than the minimum(2).");
-                else if(position.equals("Guard"))JOptionPane.showMessageDialog(null,"The number of Guards in your team will be less than the minimum(2).");
-                else JOptionPane.showMessageDialog(null,"The number of Forwards in your team will be less than the minimum(2).");
+                if (position.equals("Center"))
+                    JOptionPane.showMessageDialog(null, "The number of Centers in your team will be less than the minimum(2).");
+                else if (position.equals("Guard"))
+                    JOptionPane.showMessageDialog(null, "The number of Guards in your team will be less than the minimum(2).");
+                else
+                    JOptionPane.showMessageDialog(null, "The number of Forwards in your team will be less than the minimum(2).");
             }
-            else{
+            else {
                 repo.deleteById(player.getPlayerId());
-                JOptionPane.showMessageDialog(null, player.getFirstName()+" "+player.getLastName()+" has been removed.");
+                JOptionPane.showMessageDialog(null, player.getFullName() + " has been removed.");
                 DefaultTableModel model = (DefaultTableModel) playersTable.getModel();
                 model.removeRow(row);
             }
@@ -220,12 +231,12 @@ public class RemovePlayer {
     }
 
     //checks the number of certain player position in a team
-    private int checkTeamPositions(Player player){
+    private int checkTeamPositions(Player player) {
         String role = player.getPosition();
         int count = 0;
-        for(Player players:list){
-            if(players.getPosition().equals(role)){
-                count+=1;
+        for (Player players : list) {
+            if (players.getPosition().equals(role)) {
+                count += 1;
             }
         }
         return count;

@@ -225,7 +225,7 @@ public class AddPlayer {
         }
     }
 
-    //return row number of searched player
+    // get the player from the specified row
     private Player getPlayerFromRow(int row) {
         DefaultTableModel model = (DefaultTableModel) playersTable.getModel();
         String playerName = (String) model.getValueAt(row, 0);
@@ -238,7 +238,12 @@ public class AddPlayer {
         for (int row = 0; row < model.getRowCount(); row++) {
             Player player = getPlayerFromRow(row);
             if (player.getFullName().toLowerCase().contains(playerName.toLowerCase())) {
-                playersTable.setRowSelectionInterval(row, row);
+                // convert the row index to the index of the row actually visible
+                int index = playersTable.convertRowIndexToView(row);
+                playersTable.setRowSelectionInterval(index, index);
+
+                // scroll to the selected row
+                playersTable.scrollRectToVisible(playersTable.getCellRect(index, 0, true));
                 return;
             }
         }
