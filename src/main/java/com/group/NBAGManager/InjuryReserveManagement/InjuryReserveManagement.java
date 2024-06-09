@@ -73,13 +73,6 @@ public class InjuryReserveManagement {
         frame.setLocationRelativeTo(null);
         frame.setResizable(false);
         frame.setVisible(true);
-
-        frame.addWindowListener(new WindowAdapter() {
-            @Override
-            public void windowClosing(WindowEvent e) {
-                super.windowClosing(e);
-            }
-        });
     }
 
     private void addPlayerFromRepository() {
@@ -179,8 +172,9 @@ public class InjuryReserveManagement {
                     injuredPlayers.push(player);
 
                     // update the injured players table
-                loadStackState();
-                }playerListFrame.dispose();
+                    loadStackState();
+                }
+                playerListFrame.dispose();
             }
         });
 
@@ -201,6 +195,7 @@ public class InjuryReserveManagement {
             // update database
             player.setInjured(false);
             player.setInjuryDateTime(null);
+            player.setInjuryDescription("");
             teamRepository.update(player);
         }
         else {
