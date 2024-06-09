@@ -1,5 +1,6 @@
 package com.group.NBAGManager;
 
+import com.group.NBAGManager.components.RoundedButton;
 import com.group.NBAGManager.model.*;
 import com.group.NBAGManager.repository.PlayerRepository;
 import com.group.NBAGManager.repository.TeamRepository;
@@ -130,6 +131,10 @@ public class AddPlayer {
     }
         scroll.setViewportView(playersTable);
 }
+
+    private void createUIComponents() {
+        backButton = new RoundedButton("Back");
+    }
 
     //customizes the appearance of JTable cells, adjusting font and colors based on selection
     static class CustomCellRenderer extends DefaultTableCellRenderer {
