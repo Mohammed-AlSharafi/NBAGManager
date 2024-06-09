@@ -1,5 +1,6 @@
 package com.group.NBAGManager.LoginPage;
 
+import com.group.NBAGManager.AddPlayer;
 import com.group.NBAGManager.App;
 import com.group.NBAGManager.model.*;
 import com.group.NBAGManager.repository.PlayerRepository;
@@ -183,16 +184,27 @@ public class LoginMenu extends JFrame {
 
         //retrieve user from repository
         User currentUser =  userRepository.findUserByUsername(username);
+        if(currentUser == null){
+            JOptionPane.showMessageDialog(this, "Invalid username or password", "Error", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
         String hashedPassword = SecureEncryptor.hashPassword(password,currentUser.getSalt());
 
         //check if the password matches
         if (currentUser != null && currentUser.getPassword().equals(hashedPassword)) {
             //sets the loggedInUser as the currentUser
             CurrentSession.getInstance().setLoggedInUser(currentUser);
-            //open the main menu
-            App app = new App();
-            app.displayForm();
-            dispose();
+            //open the add player menu if is first login
+            if(currentUser.isFirstLogin()){
+                AddPlayer addPlayer = new AddPlayer();
+                addPlayer.displayForm();
+                dispose();
+                //else open the main application
+            }else {
+                App app = new App();
+                app.displayForm();
+                dispose();
+            }
         } else {
             //prompt message if password or username is incorrect
             JOptionPane.showMessageDialog(this, "Invalid username or password", "Error", JOptionPane.ERROR_MESSAGE);

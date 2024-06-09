@@ -4,6 +4,7 @@ import com.group.NBAGManager.components.RoundedButton;
 import com.group.NBAGManager.model.*;
 import com.group.NBAGManager.repository.PlayerRepository;
 import com.group.NBAGManager.repository.TeamRepository;
+import com.group.NBAGManager.repository.UserRepository;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableCellRenderer;
@@ -35,6 +36,8 @@ public class AddPlayer {
     List<Player> marketPlayers;
 
     public AddPlayer() {
+        //setting back/OK button to default
+        backButton.setEnabled(false);
         //creates team repository for checking team size
         teamRepository = RepositoryHandler.getInstance().getTeamRepository();
         //creates player repository for Free Agent Market
@@ -61,6 +64,14 @@ public class AddPlayer {
         backButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
+                UserRepository userRepository = RepositoryHandler.getInstance().getUserRepository();
+                User user = CurrentSession.getInstance().getLoggedInUser();
+                if(user.isFirstLogin()) {
+                    user.setIsFirstLogin(false);
+                    userRepository.update(user);
+                    App app = new App();
+                    app.displayForm();
+                }
                 frame.dispose();
             }
         });
@@ -140,7 +151,9 @@ public class AddPlayer {
     }
 
     private void createUIComponents() {
-        backButton = new RoundedButton("Back");
+        User user = CurrentSession.getInstance().getLoggedInUser();
+        String backBtnString = user.isFirstLogin()? "OK" : "Back";
+        backButton = new RoundedButton(backBtnString);
     }
 
     //customizes the appearance of JTable cells, adjusting font and colors based on selection
@@ -215,6 +228,9 @@ public class AddPlayer {
                             teamRepository.save(player);
 
                             teamPlayers.add(player); //to update current cached team players
+                            if (teamPlayers.size() >= 10) {
+                                backButton.setEnabled(true);
+                            }
                             marketPlayers.remove(player); //to update current cached market players
                             DefaultTableModel model = (DefaultTableModel) playersTable.getModel();
                             model.removeRow(row);
