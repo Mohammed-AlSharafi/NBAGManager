@@ -1,18 +1,15 @@
 package com.group.NBAGManager;
 
-import java.awt.*;
-import java.awt.event.*;
-import java.io.*;
-import java.util.*;
-import java.util.List;
-import javax.swing.*;
-import javax.swing.table.DefaultTableModel;
-
-import com.group.NBAGManager.model.CurrentSession;
 import com.group.NBAGManager.model.Player;
 import com.group.NBAGManager.model.RepositoryHandler;
 import com.group.NBAGManager.repository.TeamRepository;
-import com.group.NBAGManager.repository.UserRepository;
+
+import javax.swing.*;
+import javax.swing.table.DefaultTableModel;
+import java.awt.*;
+import java.awt.event.*;
+import java.util.List;
+import java.util.PriorityQueue;
 
 public class ContractExtensionQueue {
 
@@ -52,10 +49,23 @@ public class ContractExtensionQueue {
         // load existing queue
         loadQueueState();
 
+        //action listener
         addButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 addPlayerFromRepository();
+            }
+        });
+        backButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                frame.dispose(); //close
+            }
+        });
+        removeButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                removePlayerFromQueue();
             }
         });
     }
@@ -69,36 +79,7 @@ public class ContractExtensionQueue {
         frame.setLocationRelativeTo(null);
         frame.setResizable(false);
         frame.setVisible(true);
-        frame.addWindowListener(new WindowAdapter() {
-            @Override
-            public void windowClosing(WindowEvent e) {
-                super.windowClosing(e);
-            }
-        });
-
-        //action listener
-        backButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                frame.dispose(); //close
-            }
-        });
-
-        removeButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                removePlayerFromQueue();
-            }
-        });
-
-        frame.addWindowListener(new java.awt.event.WindowAdapter() {
-            @Override
-            public void windowClosing(java.awt.event.WindowEvent e) {
-                super.windowClosing(e);
-            }
-        });
     }
-
 
     private void addPlayerFromRepository() { //window popup containing players in current team
         JFrame playerListFrame = new JFrame("Select Player");
