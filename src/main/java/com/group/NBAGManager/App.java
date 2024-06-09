@@ -1,6 +1,7 @@
 package com.group.NBAGManager;
 
 import com.group.NBAGManager.InjuryReserveManagement.InjuryReserveManagement;
+import com.group.NBAGManager.components.RoundedButton;
 import com.group.NBAGManager.model.Player;
 import com.group.NBAGManager.model.RepositoryHandler;
 import com.group.NBAGManager.repository.TeamRepository;
@@ -32,6 +33,7 @@ public class App {
     private JTable displayTable;
     private JFrame frame;
     private TeamRepository teamRepository;
+    List<Player> allPlayers;
 
     public App() {
         teamRepository = RepositoryHandler.getInstance().getTeamRepository();
@@ -96,23 +98,36 @@ public class App {
         filteredSearchButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                frame.dispose();
                 Filter filter = new Filter();
                 filter.displayForm();
+
+                filter.getFrame().addWindowListener(new WindowAdapter() {
+                    @Override
+                    public void windowClosed(WindowEvent e) {
+                        List<Player> filteredPlayers = filter.getFilteredPlayers();
+                        if(filteredPlayers != allPlayers) {
+                            resetButton.setVisible(true);
+                            displayPlayers(filteredPlayers);
+                        }else {
+                            resetButton.setVisible(false);
+                        }
+                    }
+                });
             }
         });
         resetButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                frame.dispose();
-                new App().displayForm();
+                displayPlayers(allPlayers);
+                resetButton.setVisible(false);
             }
         });
     }
 
     public void displayForm() {
         resetButton.setVisible(false);
-        displayForm(teamRepository.findAll());
+        allPlayers = teamRepository.findAll();
+        displayForm(allPlayers);
     }
 
     public void displayForm(List<Player> players) {
@@ -191,6 +206,17 @@ public class App {
         for (int i = 0; i < displayTable.getColumnCount(); i++) {
             displayTable.getColumnModel().getColumn(i).setCellRenderer(new CustomCellRenderer());
         }
+    }
+
+    private void createUIComponents() {
+        addPlayerBtn = new RoundedButton("Add Player");
+        removeButton = new RoundedButton("Remove Player");
+        injuriesButton = new RoundedButton("Injuries");
+        contractButton = new RoundedButton("Contract");
+        rankingButton = new RoundedButton("Ranking");
+        journeyButton = new RoundedButton("Journey");
+        filteredSearchButton = new RoundedButton("Filtered Search");
+        resetButton = new RoundedButton("Reset");
     }
 
     static class CustomCellRenderer extends DefaultTableCellRenderer {

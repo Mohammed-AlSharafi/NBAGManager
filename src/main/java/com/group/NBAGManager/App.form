@@ -3,12 +3,12 @@
   <grid id="27dc6" binding="panelMain" layout-manager="GridLayoutManager" row-count="3" column-count="6" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
     <margin top="0" left="0" bottom="0" right="0"/>
     <constraints>
-      <xy x="20" y="20" width="684" height="400"/>
+      <xy x="20" y="20" width="839" height="400"/>
     </constraints>
     <properties/>
     <border type="none"/>
     <children>
-      <component id="de2d9" class="javax.swing.JButton" binding="addPlayerBtn">
+      <component id="de2d9" class="javax.swing.JButton" binding="addPlayerBtn" custom-create="true">
         <constraints>
           <grid row="2" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
         </constraints>
@@ -16,7 +16,7 @@
           <text value="Add Player"/>
         </properties>
       </component>
-      <component id="ad80e" class="javax.swing.JButton" binding="removeButton" default-binding="true">
+      <component id="ad80e" class="javax.swing.JButton" binding="removeButton" custom-create="true" default-binding="true">
         <constraints>
           <grid row="2" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
         </constraints>
@@ -24,7 +24,7 @@
           <text value="Remove Player"/>
         </properties>
       </component>
-      <component id="81dcc" class="javax.swing.JButton" binding="injuriesButton" default-binding="true">
+      <component id="81dcc" class="javax.swing.JButton" binding="injuriesButton" custom-create="true" default-binding="true">
         <constraints>
           <grid row="2" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
         </constraints>
@@ -32,7 +32,7 @@
           <text value="Injuries"/>
         </properties>
       </component>
-      <component id="5dfbd" class="javax.swing.JButton" binding="contractButton" default-binding="true">
+      <component id="5dfbd" class="javax.swing.JButton" binding="contractButton" custom-create="true" default-binding="true">
         <constraints>
           <grid row="2" column="3" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
         </constraints>
@@ -40,7 +40,7 @@
           <text value="Contract"/>
         </properties>
       </component>
-      <component id="71cea" class="javax.swing.JButton" binding="rankingButton" default-binding="true">
+      <component id="71cea" class="javax.swing.JButton" binding="rankingButton" custom-create="true" default-binding="true">
         <constraints>
           <grid row="2" column="4" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
         </constraints>
@@ -48,7 +48,7 @@
           <text value="Ranking"/>
         </properties>
       </component>
-      <component id="df89e" class="javax.swing.JButton" binding="journeyButton" default-binding="true">
+      <component id="df89e" class="javax.swing.JButton" binding="journeyButton" custom-create="true" default-binding="true">
         <constraints>
           <grid row="2" column="5" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
         </constraints>
@@ -56,7 +56,7 @@
           <text value="Journey"/>
         </properties>
       </component>
-      <component id="6ec4d" class="javax.swing.JButton" binding="filteredSearchButton" default-binding="true">
+      <component id="6ec4d" class="javax.swing.JButton" binding="filteredSearchButton" custom-create="true" default-binding="true">
         <constraints>
           <grid row="0" column="5" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
         </constraints>
@@ -86,7 +86,7 @@
           </component>
         </children>
       </scrollpane>
-      <component id="3702d" class="javax.swing.JButton" binding="resetButton" default-binding="true">
+      <component id="3702d" class="javax.swing.JButton" binding="resetButton" custom-create="true" default-binding="true">
         <constraints>
           <grid row="0" column="4" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
         </constraints>
