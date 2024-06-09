@@ -8,7 +8,7 @@
     <properties/>
     <border type="none"/>
     <children>
-      <component id="3f01f" class="javax.swing.JButton" binding="removeButton">
+      <component id="3f01f" class="javax.swing.JButton" binding="removeButton" custom-create="true">
         <constraints>
           <grid row="2" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
         </constraints>
@@ -16,7 +16,7 @@
           <text value="Remove Player"/>
         </properties>
       </component>
-      <component id="ba284" class="javax.swing.JButton" binding="backButton">
+      <component id="ba284" class="javax.swing.JButton" binding="backButton" custom-create="true">
         <constraints>
           <grid row="2" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
         </constraints>
@@ -24,7 +24,7 @@
           <text value="Back"/>
         </properties>
       </component>
-      <component id="29d93" class="javax.swing.JButton" binding="addButton">
+      <component id="29d93" class="javax.swing.JButton" binding="addButton" custom-create="true">
         <constraints>
           <grid row="2" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
         </constraints>

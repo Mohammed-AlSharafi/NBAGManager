@@ -1,5 +1,6 @@
 package com.group.NBAGManager;
 
+import com.group.NBAGManager.components.RoundedButton;
 import com.group.NBAGManager.model.Player;
 import com.group.NBAGManager.model.RepositoryHandler;
 import com.group.NBAGManager.repository.TeamRepository;
@@ -111,7 +112,7 @@ public class ContractExtensionQueue {
         JScrollPane scrollPane = new JScrollPane(playerTable);
         playerListFrame.add(scrollPane);
 
-        addToQueue = new JButton("Add");
+        addToQueue = new RoundedButton("Add");
         playerListFrame.add(addToQueue, BorderLayout.SOUTH);
         addToQueue.setEnabled(false);
 
@@ -204,5 +205,11 @@ public class ContractExtensionQueue {
     //return contract status
     private String contractStatus(Player player){
         return player.isContractRenewQueued()? "Pending to renew contract" : "Active";
+    }
+
+    private void createUIComponents() {
+        addButton = new RoundedButton("Add Player");
+        removeButton = new RoundedButton("Remove Player");
+        backButton = new RoundedButton("Back");
     }
 }
