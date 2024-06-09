@@ -1,5 +1,6 @@
 package com.group.NBAGManager.InjuryReserveManagement;
 
+import com.group.NBAGManager.components.RoundedButton;
 import com.group.NBAGManager.model.Player;
 import com.group.NBAGManager.model.RepositoryHandler;
 import com.group.NBAGManager.repository.TeamRepository;
@@ -111,7 +112,7 @@ public class InjuryReserveManagement {
         JScrollPane scrollPane = new JScrollPane(addPlayerTable);
         playerListFrame.add(scrollPane);
 
-        JButton addToStack = new JButton("Add");
+        JButton addToStack = new RoundedButton("Add");
         playerListFrame.add(addToStack, BorderLayout.SOUTH);
         addToStack.setEnabled(false);
 
@@ -232,5 +233,11 @@ public class InjuryReserveManagement {
             }
         };
         injuryTable.setModel(tableModel);
+    }
+
+    private void createUIComponents() {
+        addButton = new RoundedButton("Add Player");
+        removeButton = new RoundedButton("Remove Player");
+        backButton = new RoundedButton("Back");
     }
 }

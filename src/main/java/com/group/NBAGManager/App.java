@@ -1,6 +1,7 @@
 package com.group.NBAGManager;
 
 import com.group.NBAGManager.InjuryReserveManagement.InjuryReserveManagement;
+import com.group.NBAGManager.components.RoundedButton;
 import com.group.NBAGManager.model.Player;
 import com.group.NBAGManager.model.RepositoryHandler;
 import com.group.NBAGManager.repository.TeamRepository;
@@ -205,6 +206,17 @@ public class App {
         for (int i = 0; i < displayTable.getColumnCount(); i++) {
             displayTable.getColumnModel().getColumn(i).setCellRenderer(new CustomCellRenderer());
         }
+    }
+
+    private void createUIComponents() {
+        addPlayerBtn = new RoundedButton("Add Player");
+        removeButton = new RoundedButton("Remove Player");
+        injuriesButton = new RoundedButton("Injuries");
+        contractButton = new RoundedButton("Contract");
+        rankingButton = new RoundedButton("Ranking");
+        journeyButton = new RoundedButton("Journey");
+        filteredSearchButton = new RoundedButton("Filtered Search");
+        resetButton = new RoundedButton("Reset");
     }
 
     static class CustomCellRenderer extends DefaultTableCellRenderer {

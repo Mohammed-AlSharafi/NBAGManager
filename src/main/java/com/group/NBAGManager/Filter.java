@@ -1,5 +1,6 @@
 package com.group.NBAGManager;
 
+import com.group.NBAGManager.components.RoundedButton;
 import com.group.NBAGManager.model.GuiCreator;
 import com.group.NBAGManager.model.Player;
 import com.group.NBAGManager.model.RepositoryHandler;
@@ -252,6 +253,6 @@ public class Filter {
     }
 
     private void createUIComponents() {
-        searchButton = GuiCreator.createButton("Search", new Font("Roboto Mono", Font.BOLD, 15), Color.decode("#646669"), Color.decode("#323437"), false, 1, 4);
+        searchButton = new RoundedButton("Search");
     }
 }
