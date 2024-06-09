@@ -20,6 +20,7 @@ public class ContractExtensionQueue {
     private JButton backButton;
     private JButton addButton;
     private JLabel heading;
+    private JScrollPane scroll;
     private JButton addToQueue;
     private JFrame frame;
 

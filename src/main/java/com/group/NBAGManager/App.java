@@ -32,6 +32,7 @@ public class App {
     private JTable displayTable;
     private JFrame frame;
     private TeamRepository teamRepository;
+    List<Player> allPlayers;
 
     public App() {
         teamRepository = RepositoryHandler.getInstance().getTeamRepository();
@@ -96,23 +97,36 @@ public class App {
         filteredSearchButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                frame.dispose();
                 Filter filter = new Filter();
                 filter.displayForm();
+
+                filter.getFrame().addWindowListener(new WindowAdapter() {
+                    @Override
+                    public void windowClosed(WindowEvent e) {
+                        List<Player> filteredPlayers = filter.getFilteredPlayers();
+                        if(filteredPlayers != allPlayers) {
+                            resetButton.setVisible(true);
+                            displayPlayers(filteredPlayers);
+                        }else {
+                            resetButton.setVisible(false);
+                        }
+                    }
+                });
             }
         });
         resetButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                frame.dispose();
-                new App().displayForm();
+                displayPlayers(allPlayers);
+                resetButton.setVisible(false);
             }
         });
     }
 
     public void displayForm() {
         resetButton.setVisible(false);
-        displayForm(teamRepository.findAll());
+        allPlayers = teamRepository.findAll();
+        displayForm(allPlayers);
     }
 
     public void displayForm(List<Player> players) {

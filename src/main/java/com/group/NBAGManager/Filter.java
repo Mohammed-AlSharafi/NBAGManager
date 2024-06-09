@@ -45,6 +45,8 @@ public class Filter {
     private JLabel heightLesserThanLabel;
     private JLabel weightLesserThanLabel;
     private JFrame frame;
+    private List<Player> players;
+    private List<Player> filteredPlayers;
 
     static class CustomDocument extends PlainDocument {
         public CustomDocument() {
@@ -86,12 +88,13 @@ public class Filter {
     }
 
     public Filter() {
+        TeamRepository teamRepository = RepositoryHandler.getInstance().getTeamRepository();
+        List<Player> players = teamRepository.findAll();
+        filteredPlayers = players;
+
         searchButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                TeamRepository teamRepository = RepositoryHandler.getInstance().getTeamRepository();
-                List<Player> players = teamRepository.findAll();
-
                 String height1 = heightField1.getText();
                 String height2 = heightField2.getText();
                 String weight1 = weightField1.getText();
@@ -181,9 +184,9 @@ public class Filter {
                     }
                 }
 
-                System.out.println(selectedPlayers);
+                filteredPlayers = selectedPlayers;
                 frame.dispose();
-                new App().displayForm(selectedPlayers);
+
             }
         });
 
@@ -196,6 +199,14 @@ public class Filter {
         assistsField.setDocument(new CustomDocument());
         stealsField.setDocument(new CustomDocument());
         blocksField.setDocument(new CustomDocument());
+    }
+
+    public JFrame getFrame() {
+        return frame;
+    }
+
+    public List<Player> getFilteredPlayers() {
+        return filteredPlayers;
     }
 
     private static Double translateTextToDouble(String text) {
@@ -228,7 +239,7 @@ public class Filter {
     public void displayForm() {
         frame = new JFrame("Filter");
         frame.setContentPane(panelMain);
-        frame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
+        frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         frame.setSize(600, 400);
         frame.setLocationRelativeTo(null);
         frame.setVisible(true);
@@ -236,7 +247,6 @@ public class Filter {
             @Override
             public void windowClosing(WindowEvent e) {
                 frame.dispose();
-                new App().displayForm();
             }
         });
     }
