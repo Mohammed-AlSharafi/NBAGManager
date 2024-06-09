@@ -1,26 +1,50 @@
 package com.group.NBAGManager.LoginPage;
+
 import com.group.NBAGManager.App;
-import com.group.NBAGManager.model.CurrentSession;
-import com.group.NBAGManager.model.GuiCreator;
-import com.group.NBAGManager.model.RepositoryHandler;
-import com.group.NBAGManager.model.User;
+import com.group.NBAGManager.model.*;
+import com.group.NBAGManager.repository.PlayerRepository;
 import com.group.NBAGManager.repository.UserRepository;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.io.IOException;
+import java.util.List;
 
 
 public class LoginMenu extends JFrame {
 
     UserRepository userRepository = RepositoryHandler.getInstance().getUserRepository();
+    PlayerRepository playerRepository = RepositoryHandler.getInstance().getPlayerRepository();
     private JTextField usernameField;
     private JPasswordField passwordField;
 
 
     // Constructor for the LoginMenu class
     public LoginMenu() throws IOException {
+        APIHandler apiHandler = new APIHandler();
+
+        List<Player> currentPlayers = playerRepository.findAll();
+        List<Player> players = apiHandler.getMarketPlayers();
+
+        System.out.println("Number of players: " + players.size());
+
+        // update database information for new players/changed stats of players
+        players.forEach(player -> {
+            int index = currentPlayers.indexOf(player);
+            if (index != -1) {
+                Player repoPlayer = currentPlayers.get(index);
+                if (!repoPlayer.equals(player)) {
+                    playerRepository.update(player);
+                }
+            }
+            else {
+                playerRepository.save(player);
+            }
+        });
+
         //set JFrame properties
         setTitle("NBA G-Manager");
         setSize(600, 400);
@@ -141,9 +165,6 @@ public class LoginMenu extends JFrame {
         registerButton.addActionListener((ActionEvent e) ->{
             register();
         });
-
-
-
     }
 
     //method to handle login logic
