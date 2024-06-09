@@ -18,27 +18,31 @@ public class PlayerRepository extends Repository<Player> implements PlayerReposi
 //    }
 
     //helper method to set the PreparedStatement parameters
-    private void setPlayerParameters(PreparedStatement pStatement, Player obj) throws SQLException {
-        pStatement.setString(1, obj.getFirstName());
-        pStatement.setString(2, obj.getLastName());
-        pStatement.setInt(3, obj.getAge());
-        pStatement.setDouble(4, obj.getHeight());
-        pStatement.setDouble(5, obj.getWeight());
-        pStatement.setString(6, obj.getPosition());
-        pStatement.setDouble(7, obj.getPoints());
-        pStatement.setDouble(8, obj.getRebounds());
-        pStatement.setDouble(9, obj.getAssists());
-        pStatement.setDouble(10, obj.getSteals());
-        pStatement.setDouble(11, obj.getBlocks());
-        pStatement.setDouble(12, obj.getCompositeScore());
+    private void setPlayerParameters(PreparedStatement pStatement, Player obj, boolean id) throws SQLException {
+        int index = 1;
+        if (id) {
+            pStatement.setInt(index++, obj.getPlayerId());
+        }
+        pStatement.setString(index++, obj.getFirstName());
+        pStatement.setString(index++, obj.getLastName());
+        pStatement.setInt(index++, obj.getAge());
+        pStatement.setDouble(index++, obj.getHeight());
+        pStatement.setDouble(index++, obj.getWeight());
+        pStatement.setString(index++, obj.getPosition());
+        pStatement.setDouble(index++, obj.getPoints());
+        pStatement.setDouble(index++, obj.getRebounds());
+        pStatement.setDouble(index++, obj.getAssists());
+        pStatement.setDouble(index++, obj.getSteals());
+        pStatement.setDouble(index++, obj.getBlocks());
+        pStatement.setDouble(index, obj.getCompositeScore());
     }
 
     //add player to database
     public void save(Player obj) {
         try{
-            String query = "INSERT INTO players (firstName, lastName, age, height, weight, position, points, rebounds, assists, steals, blocks, compositeScore) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+            String query = "INSERT INTO players (playerId, firstName, lastName, age, height, weight, position, points, rebounds, assists, steals, blocks, compositeScore) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
             PreparedStatement pStatement = con.prepareStatement(query);
-            setPlayerParameters(pStatement, obj);
+            setPlayerParameters(pStatement, obj, true);
             pStatement.executeUpdate();
 
         }catch (SQLException e){
@@ -115,7 +119,7 @@ public class PlayerRepository extends Repository<Player> implements PlayerReposi
         try{
             String query = "UPDATE players SET firstName = ?, lastName = ?, age = ?, height = ?, weight = ?, position = ?, points = ?, rebounds = ?, assists = ?, steals = ?, blocks = ?, compositeScore = ? WHERE playerId = ?";
             PreparedStatement pStatement = con.prepareStatement(query);
-            setPlayerParameters(pStatement, obj);
+            setPlayerParameters(pStatement, obj,false);
             pStatement.setInt(13, obj.getPlayerId());
             pStatement.executeUpdate();
         }catch (SQLException e){
