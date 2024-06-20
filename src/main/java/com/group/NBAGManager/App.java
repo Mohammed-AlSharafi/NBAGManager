@@ -173,12 +173,11 @@ public class App {
             public Class<?> getColumnClass(int columnIndex) {
                 switch (columnIndex) {
                     case 0:
-                    case 4:
+                    case 3:
                         return String.class;
                     case 1:
-                        return Integer.class;
                     case 2:
-                    case 3:
+                    case 4:
                     case 5:
                     case 6:
                     case 7:
