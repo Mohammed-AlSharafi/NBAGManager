@@ -46,6 +46,20 @@ public class PlayerPerformanceRanking {
             public boolean isCellEditable(int row, int column) {
                 return false;
             }
+
+            @Override
+            public Class<?> getColumnClass(int columnIndex) {
+                switch (columnIndex) {
+                    case 0:
+                        return Integer.class;
+                    case 1:
+                        return String.class;
+                    case 2:
+                        return Double.class;
+                    default:
+                        return Object.class;
+                }
+            }
         };
 
         //create the performace ranking table
